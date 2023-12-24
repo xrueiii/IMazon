@@ -1,5 +1,5 @@
 import NextAuth from "next-auth";
-import Google from "next-auth/providers/google";
+import GoogleProvider from "next-auth/providers/google";
 
 import { eq } from "drizzle-orm";
 
@@ -12,7 +12,10 @@ export const {
   handlers: { GET, POST },
   auth,
 } = NextAuth({
-  providers: [Google, CredentialsProvider],
+  providers: [GoogleProvider({
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET
+  }), CredentialsProvider],
   callbacks: {
     async session({ session, token }) {
       const email = token.email || session?.user?.email;
