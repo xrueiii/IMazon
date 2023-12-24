@@ -5,9 +5,9 @@ type Props = {
 };
 export default async function WarehouseLayout({ children }: Props) {
   return (
-    <main className="flex flex-col h-screen max-w-7xl mx-auto py-5">
+    <main className="flex flex-col h-screen max-w-7xl mx-auto">
       <HeaderBar/>
-      <div className="w-full h-screen">{children}</div>
+      <div className="w-full">{children}</div>
     </main>
   );
 }
