@@ -1,7 +1,18 @@
+import Product from "./_components/Product";
+
 export default function WarehousePage() {
   return (
-    <main className="flex h-full w-full items-center justify-center border-2 rounded-b-xl">
-      <h1 className="text-xl text-gray-600/50">Please add an item</h1>
+    <main className="flex-col h-full w-full justify-between border-2 rounded-b-xl">
+      <p className="text-2xl font-semibold mt-10 ml-20">Products</p>
+      <div className="grid grid-cols-3 w-full max-h-full px-20 gap-5 mt-5 overflow-scroll">
+        <Product/>
+        <Product/>
+        <Product/>
+        <Product/>
+        <Product/>
+        <Product/>
+      </div>
+      
     </main>
   );
 }
