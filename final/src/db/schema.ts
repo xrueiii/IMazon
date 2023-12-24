@@ -1,10 +1,4 @@
-import {
-  index,
-  pgTable,
-  serial,
-  uuid,
-  varchar,
-} from "drizzle-orm/pg-core";
+import { index, pgTable, serial, uuid, varchar } from "drizzle-orm/pg-core";
 
 export const usersTable = pgTable(
   "users",
@@ -25,4 +19,12 @@ export const usersTable = pgTable(
     displayIdIndex: index("display_id_index").on(table.displayId),
     emailIndex: index("email_index").on(table.email),
   }),
+);
+
+export const productTable = pgTable(
+  "products",
+  {
+    id: serial("id").primaryKey(),
+  },
+  (table) => ({}),
 );
