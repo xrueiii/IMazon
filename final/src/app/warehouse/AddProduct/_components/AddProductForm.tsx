@@ -2,12 +2,18 @@
 
 import { useState } from "react";
 
+import { useRouter } from "next/navigation";
+
 function AddProductForm() {
   const [name, setName] = useState<string>("");
   const [price, setPrice] = useState<string>("");
+  const router = useRouter();
   // const [picture, setPicture] = useState();
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+  };
+  const handleCancel = () => {
+    router.push("/warehouse");
   };
   return (
     <div className="min-w-[400px] rounded-2xl border-2 border-black bg-white p-4">
@@ -49,6 +55,7 @@ function AddProductForm() {
               data-testid="add-submit-button"
               type="submit"
               className="mb-3 w-full rounded-lg border-2 py-1 hover:bg-slate-100"
+              onClick={handleCancel}
             >
               Cancel
             </button>
