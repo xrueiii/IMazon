@@ -58,9 +58,9 @@ export async function addProduct(
 const addProductDetailSchema = z.object({
   productId: z.string(),
   productQuantity: z.number(),
-  productPrice: z.number(),
-  productColor: z.string(),
-  productSize: z.string().optional(),
+  productPrice: z.string().min(1).max(20),
+  productStyle: z.string().min(1).max(20),
+  productSize: z.string().min(1).max(20).optional(),
   productImageLink: z.string().url(),
 });
 

@@ -15,7 +15,7 @@ export type Product = {
 export type ProductDetail = {
   id: string;
   productId: string;
-  price: number;
+  price: string;
   style: string;
   size?: string;
   quantity: number;

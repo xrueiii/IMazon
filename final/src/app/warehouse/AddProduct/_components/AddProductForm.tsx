@@ -23,10 +23,7 @@ export default function AddProductForm() {
   const [isNext, setIsNext] = useState(true);
   const router = useRouter();
   // const [picture, setPicture] = useState();
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsNext(false);
-  };
+  
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     setName(inputValue);

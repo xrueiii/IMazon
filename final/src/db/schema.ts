@@ -48,7 +48,7 @@ export const productDetailTable = pgTable(
     displayId: uuid("display_id").defaultRandom().notNull().unique(),
     productQuantity: integer("product_quantity").notNull(),
     productSold: integer("product_sold").default(0),
-    productPrice: integer("product_price").notNull(),
+    productPrice: varchar("product_price", { length: 20 }).notNull(),
     productImageLink: varchar("product_image_link").notNull(),
     productStyle: varchar("product_color", { length: 20 }).notNull(),
     productSize: varchar("product_size", { length: 20 }).default(""),
