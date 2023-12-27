@@ -1,5 +1,7 @@
 import DeleteButton from "./_components/DeleteButton";
 import EditButton from "./_components/EditButton";
+import ProductDescription from "./_components/ProductDescription";
+import ProductDetail from "./_components/ProductDetail";
 import ProductImage from "./_components/ProductImage";
 
 type Props = {
@@ -14,17 +16,12 @@ function ProductPage({ params }: Props) {
       </div>
       <div className="relative flex h-96 w-3/5 flex-wrap bg-white">
         <div className="flex h-24 w-full items-center justify-end gap-4 px-8 py-3">
-          <DeleteButton productId={params.productId}/>
-          <EditButton/>
+          <DeleteButton productId={params.productId} />
+          <EditButton />
         </div>
-        <div className="flex h-48 w-full flex-wrap gap-x-4 bg-white px-8">
-          {/*<ProductDetail/>*/}
-        </div>
-        <div className="flex h-24 w-full items-center justify-start gap-4 px-8 py-3">
-          {/*<ProductStyle/>*/}
-        </div>
+        <ProductDetail productId={params.productId} />
       </div>
-      {/*<ProductDescription/>*/}
+      <ProductDescription productId={params.productId} />
       <div className="min-h-screen w-2/5 grow overflow-y-scroll bg-gray-400"></div>
     </div>
   );
