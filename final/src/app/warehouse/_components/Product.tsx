@@ -9,7 +9,10 @@ export default function Product() {
                 <p className="text-lg font-semibold">$81</p>
             </div>
             
-            <p className="text-gray-500 text-sm">Quantity: 52</p>
+            <div className="flex justify-between mt-2">
+                <p className="text-gray-500 text-sm">Quantity: 52</p>
+                <p className="text-gray-500 text-sm">Sold: 1</p>
+            </div>
         </div>
     );
 }
