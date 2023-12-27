@@ -20,6 +20,20 @@ export const deleteProduct = async (productId: string) => {
   return;
 };
 
+export async function getProductDetail_1(productId: string) {
+  console.log(productId);
+  const [productDetail] = await db.query.productTable.findMany({
+    where: eq(productTable.displayId, productId),
+    columns: {
+      productName: true,
+      productDescription: true,
+      sellerdisplayId: true,
+    },
+  });
+
+  return productDetail;
+}
+
 export async function getProductDetail_2(productId: string) {
   console.log(productId);
   const productDetail = await db.query.productDetailTable.findMany({
@@ -28,7 +42,7 @@ export async function getProductDetail_2(productId: string) {
       productQuantity: true,
       productSold: true,
       productPrice: true,
-      productSize: true,
+      productStyle: true,
     },
   });
 
