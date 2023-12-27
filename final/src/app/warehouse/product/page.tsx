@@ -123,6 +123,7 @@ const ProductPage: React.FC = () => {
         {selectedStyle.description.split("\n").map((line, index) => (
           <p key={index}>{line}</p>
         ))}
+        <br />
         <Image
           src={selectedStyle.descPhoto}
           alt="DescProduct photo"
