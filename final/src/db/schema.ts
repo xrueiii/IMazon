@@ -51,7 +51,6 @@ export const productDetailTable = pgTable(
     productPrice: varchar("product_price", { length: 20 }).notNull(),
     productImageLink: varchar("product_image_link").notNull(),
     productStyle: varchar("product_color", { length: 20 }).notNull(),
-    productSize: varchar("product_size", { length: 20 }).default(""),
     productId: uuid("product_id")
       .notNull()
       .references(() => productTable.displayId, {

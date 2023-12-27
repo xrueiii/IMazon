@@ -1,8 +1,10 @@
 "use client";
 
-import { ChangeEvent, DragEvent, useState } from "react";
+import { useState } from "react";
+import type { ChangeEvent, DragEvent } from "react";
 
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function AddProductForm() {
   const [name, setName] = useState<string>("");
@@ -19,11 +21,10 @@ export default function AddProductForm() {
   const [quantityIsFilled, setQuantityIsFilled] = useState(true);
   const [styleIsFilled, setStyleIsFilled] = useState(true);
   const [desciptionIsFilled, setDescriptionIsFilled] = useState(true);
-  // const [image, setImage] = useState<string>("");
   const [isNext, setIsNext] = useState(true);
   const router = useRouter();
-  // const [picture, setPicture] = useState();
   
+
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     setName(inputValue);
@@ -102,6 +103,8 @@ export default function AddProductForm() {
       setImageIsFilled(true);
     }
   };
+
+
   const [isDragOver, setIsDragOver] = useState(false);
   const [previewSrc, setPreviewSrc] = useState<string | null>(null);
 
@@ -286,8 +289,9 @@ export default function AddProductForm() {
                     onChange={handleInputChange}
                   />
                   <div className="text-center">
-                    <img
+                    <Image
                       className="mx-auto h-12 w-12"
+                      fill
                       src="https://www.svgrepo.com/show/357902/image-upload.svg"
                       alt=""
                     />
@@ -312,9 +316,10 @@ export default function AddProductForm() {
                     </p>
                   </div>
                   {previewSrc && (
-                    <img
+                    <Image
                       src={previewSrc}
-                      className="mx-auto mt-4 max-h-40"
+                      fill
+                      className="mx-auto max-h-40 bg-white"
                       alt="Preview"
                     />
                   )}

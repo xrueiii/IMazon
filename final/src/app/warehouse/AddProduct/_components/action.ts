@@ -60,7 +60,6 @@ const addProductDetailSchema = z.object({
   productQuantity: z.number(),
   productPrice: z.string().min(1).max(20),
   productStyle: z.string().min(1).max(20),
-  productSize: z.string().min(1).max(20).optional(),
   productImageLink: z.string().url(),
 });
 
@@ -70,7 +69,6 @@ export async function addProductDetail(
   productPrice: ProductDetail["price"],
   productStyle: ProductDetail["style"],
   productImageLink: ProductDetail["imageLink"],
-  productSize?: ProductDetail["size"],
   ) {
 
   const session = await auth();
@@ -85,7 +83,6 @@ export async function addProductDetail(
       productQuantity: productQuantity,
       productPrice: productPrice,
       productStyle: productStyle,
-      productSize: productSize,
       productImageLink: productImageLink,
     });
   } catch (error) {
@@ -99,7 +96,6 @@ export async function addProductDetail(
       productQuantity: productQuantity,
       productPrice: productPrice,
       productStyle: productStyle,
-      productSize: productSize,
       productImageLink: productImageLink,
     })
     .onConflictDoNothing()
@@ -113,8 +109,11 @@ export async function addProductDetail(
     price: temp.productPrice,
     imageLink: temp.productImageLink,
     style: temp.productStyle,
-    size: temp.productSize ?? "",
   }
 
   return newProductDetail;
 }
+
+
+
+

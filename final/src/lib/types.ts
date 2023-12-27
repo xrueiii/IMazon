@@ -17,7 +17,6 @@ export type ProductDetail = {
   productId: string;
   price: string;
   style: string;
-  size?: string;
   quantity: number;
   sold: number;
   imageLink: string;
