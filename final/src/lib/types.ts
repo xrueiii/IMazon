@@ -2,18 +2,22 @@ export type User = {
   id: string;
   name: string;
   email: string;
-  provider: "github" | "credentials";
+  provider: "google" | "credentials";
 };
 
-export type Project = {
+export type Product = {
   id: string;
-  name: string;
-  description?: string;
+  productName: string;
+  productDescription: string;
+  sellerDisplayId: string;
 };
 
-export type Task = {
+export type ProductDetail = {
   id: string;
-  title: string;
-  description?: string;
-  projectId: string;
+  productId: string;
+  price: string;
+  style: string;
+  quantity: number;
+  sold: number;
+  imageLink: string;
 };
