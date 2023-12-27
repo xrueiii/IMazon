@@ -1,18 +1,21 @@
 "use client";
 
-import { useState } from "react";
 import type { ChangeEvent, DragEvent } from "react";
+import { useEffect, useState } from "react";
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
+import type { Product, ProductDetail } from "@/lib/types";
+import { addProduct, addProductDetail } from "./action";
+
+
 export default function AddProductForm() {
   const [name, setName] = useState<string>("");
   const [price, setPrice] = useState<string>("");
-  const [quantity, setQuantity] = useState("");
+  const [quantity, setQuantity] = useState<number>(0);
   const [description, setDescription] = useState<string>("");
   const [style, setStyle] = useState<string>("");
-  const [size, setSize] = useState<string>("");
   const [nameIsFilled, setNameIsFilled] = useState(true);
   const [allFilled, setAllFilled] = useState(false);
   const [priceIsFilled, setPriceIsFilled] = useState(true);
@@ -21,45 +24,43 @@ export default function AddProductForm() {
   const [quantityIsFilled, setQuantityIsFilled] = useState(true);
   const [styleIsFilled, setStyleIsFilled] = useState(true);
   const [desciptionIsFilled, setDescriptionIsFilled] = useState(true);
+  const [productNum, setProductNum] = useState<number>(1);
+  const [productDetail, setProductDetail] = useState<
+    Omit<ProductDetail, "id" | "productId" | "sold">[]
+  >([]);
+  const [productName, setProductName] = useState<
+    Omit<Product, "id" | "sellerDisplayId">[]
+  >([]);
+  const [lastProduct, setLastProduct] = useState(false);
   const [isNext, setIsNext] = useState(true);
   const router = useRouter();
-  
-
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     setName(inputValue);
-
-    // Update nameIsFilled state based on whether the input is filled
     setNameIsFilled(!!inputValue.trim()); // Will be true if not empty
   };
   const handleDescriptionChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     setDescription(inputValue);
-
-    // Update nameIsFilled state based on whether the input is filled
     setDescriptionIsFilled(!!inputValue.trim()); // Will be true if not empty
   };
   const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     setPrice(inputValue);
-
-    // Update nameIsFilled state based on whether the input is filled
     setPriceIsFilled(!!inputValue.trim()); // Will be true if not empty
   };
   const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
-    setQuantity(inputValue);
-
-    // Update nameIsFilled state based on whether the input is filled
+    const inputNum = parseInt(inputValue, 10);
+    setQuantity(inputNum);
     setQuantityIsFilled(!!inputValue.trim()); // Will be true if not empty
   };
   const handleStyleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     setStyle(inputValue);
-
-    // Update nameIsFilled state based on whether the input is filled
     setStyleIsFilled(!!inputValue.trim()); // Will be true if not empty
   };
+
   const handleNextStep = () => {
     if (name === "") {
       setNameIsFilled(false);
@@ -72,22 +73,59 @@ export default function AddProductForm() {
       setDescriptionIsFilled(true);
     }
     if (nameIsFilled && desciptionIsFilled) setAllFilled(true);
-    if (allFilled === true) setIsNext(false);
+    if (allFilled === true) {
+      setIsNext(false);
+      setAllFilled(false);
+    }
   };
+
   const handleCancel = () => {
-    // setIsNext(true);
     router.push("/warehouse");
   };
-  const handleLastStep = () => {
-    setIsNext(true);
+
+  useEffect(() => {
+    console.log(productDetail);
+    console.log(productName);
+  }, [productDetail, productName]);
+
+  const handleNextStyle = () => {
+    setPrice(productDetail[productNum].price);
+    setQuantity(productDetail[productNum].quantity);
+    setStyle(productDetail[productNum].style);
+    setImage(productDetail[productNum].imageLink);
+    setPreviewSrc(productDetail[productNum].imageLink);
+    if (productDetail[productNum + 1] === undefined) {
+      setLastProduct(false);
+    }
+    setProductNum(productNum + 1);
   };
+
+  const handleLastStep = () => {
+    if (productDetail[productNum - 1] === undefined) {
+      setLastProduct(false);
+    } else {
+      setLastProduct(true);
+    }
+    if (productNum === 1) {
+      setIsNext(true);
+    } else {
+      setPrice(productDetail[productNum - 2].price);
+      setQuantity(productDetail[productNum - 2].quantity);
+      setStyle(productDetail[productNum - 2].style);
+      // setSize(productDetail[productNum - 2].size);
+      setImage(productDetail[productNum - 2].imageLink);
+      setPreviewSrc(productDetail[productNum - 2].imageLink);
+      setProductNum(productNum - 1);
+    }
+  };
+
   const handleNextProduct = () => {
     if (price === "") {
       setPriceIsFilled(false);
     } else {
       setPriceIsFilled(true);
     }
-    if (quantity === "") {
+    if (quantity === 0) {
       setQuantityIsFilled(false);
     } else {
       setQuantityIsFilled(true);
@@ -102,9 +140,57 @@ export default function AddProductForm() {
     } else {
       setImageIsFilled(true);
     }
+    if (priceIsFilled && quantityIsFilled && styleIsFilled && imageIsFilled)
+      setAllFilled(true);
+    if (allFilled === true && productDetail[productNum - 1] === undefined) {
+      setProductNum(productNum + 1);
+      const newProductDetail: Omit<ProductDetail, "id" | "productId" | "sold"> =
+        {
+          price,
+          style,
+          quantity,
+          imageLink: image,
+        };
+      const newProductName: Omit<Product, "id" | "sellerDisplayId"> = {
+        productName: name,
+        productDescription: description,
+      };
+      setProductDetail((prevProductDetails) => [
+        ...prevProductDetails,
+        newProductDetail,
+      ]);
+      setProductName((prevProductNames) => [
+        ...prevProductNames,
+        newProductName,
+      ]);
+
+      //clear all the existing data
+      setPrice("");
+      setStyle("");
+      setQuantity(0);
+      setImage("");
+      setPreviewSrc(null);
+    }
+    if (productDetail[productNum - 1] !== undefined) {
+      setProductNum(productNum + 1);
+      //clear all the existing data
+      setPrice("");
+      setStyle("");
+      setQuantity(0);
+      setImage("");
+      setPreviewSrc(null);
+    }
   };
 
+  const handleFinish = async() => {
+    const newPro = await addProduct(name,description);
+    for (let i = 0; i < productDetail.length; i++) {
+      addProductDetail(newPro.id, productDetail[i].quantity, productDetail[i].price, productDetail[i].style, productDetail[i].imageLink);
+    }
+    router.push(`/warehouse`);
+  };
 
+  // handle uploading picture
   const [isDragOver, setIsDragOver] = useState(false);
   const [previewSrc, setPreviewSrc] = useState<string | null>(null);
 
@@ -204,6 +290,10 @@ export default function AddProductForm() {
       )}
       {isNext === false && (
         <div className="min-w-[400px] rounded-2xl border-2 border-black bg-white p-4">
+          <div className="flex">
+            <p className="text-sm text-gray-500">Style No.</p>
+            <p className="text-sm text-gray-500">{productNum}</p>
+          </div>
           <div className="mt-5 flex flex-col gap-2">
             <div className="flex flex-col gap-4 px-10">
               <div className="w-full">
@@ -247,25 +337,11 @@ export default function AddProductForm() {
                 )}
                 <input
                   id="Quantity"
-                  type="quantity"
+                  type="number"
                   value={quantity}
                   onChange={handleQuantityChange}
                   className="mt-2 w-full bg-gray-100"
                 />
-              </div>
-              <div className="w-full">
-                <p className="font-bold">Size(optional)</p>
-                <div className="flex items-center justify-center gap-5 rounded-md bg-gray-100">
-                  <input
-                    id="size"
-                    type="size_type"
-                    value={size}
-                    onChange={(e) => {
-                      setSize(e.target.value);
-                    }}
-                    className="mt-1 w-full bg-gray-100"
-                  />
-                </div>
               </div>
               <div className="w-full">
                 <p className="font-bold">Picture</p>
@@ -334,23 +410,35 @@ export default function AddProductForm() {
                 >
                   Last Step
                 </button>
-                <button
-                  data-testid="add-submit-button"
-                  // type="submit"
-                  className="mb-3 w-full rounded-lg border-2 py-1 text-sm hover:bg-slate-100"
-                  onClick={handleNextProduct}
-                >
-                  Next product
-                </button>
-                <button
-                  data-testid="add-submit-button"
-                  // type="submit"
-                  className="mb-3 w-full rounded-lg border-2 bg-teal-900 py-1 text-sm text-white hover:bg-teal-700"
-                  onClick={handleCancel}
-                >
-                  Finish
-                </button>
+                {lastProduct === false && (
+                  <button
+                    data-testid="add-submit-button"
+                    // type="submit"
+                    className="mb-3 w-full rounded-lg border-2 py-1 text-sm hover:bg-slate-100"
+                    onClick={handleNextProduct}
+                  >
+                    Add another style
+                  </button>
+                )}
+                {lastProduct === true && (
+                  <button
+                    data-testid="add-submit-button"
+                    // type="submit"
+                    className="mb-3 w-full rounded-lg border-2 py-1 text-sm hover:bg-slate-100"
+                    onClick={handleNextStyle}
+                  >
+                    Next style
+                  </button>
+                )}
               </div>
+              <button
+                data-testid="add-submit-button"
+                // type="submit"
+                className="mb-3 w-full rounded-lg border-2 bg-teal-900 py-1 text-sm text-white hover:bg-teal-700"
+                onClick={handleFinish}
+              >
+                Finish
+              </button>
             </div>
           </div>
         </div>

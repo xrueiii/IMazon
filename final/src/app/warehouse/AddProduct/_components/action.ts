@@ -52,7 +52,7 @@ export async function addProduct(
     sellerDisplayId: temp.sellerdisplayId,
   }
 
-    return newProduct;
+  return newProduct;
 }
 
 const addProductDetailSchema = z.object({
