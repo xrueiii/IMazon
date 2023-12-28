@@ -1,4 +1,4 @@
-import FinishAdding from "./_components/FinishAdding";
+import AddProductForm from "./_components/AddProductForm";
 
 export default async function AddProductPage() {
   return (
@@ -6,7 +6,7 @@ export default async function AddProductPage() {
       <div className="flex min-w-[400px] items-center justify-center gap-4 rounded-xl border-2 border-black bg-white py-5 font-semibold">
         Add a product
       </div>
-      <FinishAdding />
+      <AddProductForm />
     </main>
   );
 }
