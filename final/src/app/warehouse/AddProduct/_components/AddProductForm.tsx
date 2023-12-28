@@ -30,6 +30,7 @@ export default function AddProductForm() {
   const [lastProduct, setLastProduct] = useState(false);
   const [isNext, setIsNext] = useState(true);
   const router = useRouter();
+
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     setName(inputValue);
@@ -180,6 +181,50 @@ export default function AddProductForm() {
 
   const handleFinish = () => {
     //store everything to db
+    if (price === "") {
+      setPriceIsFilled(false);
+    } else {
+      setPriceIsFilled(true);
+    }
+    if (quantity === 0) {
+      setQuantityIsFilled(false);
+    } else {
+      setQuantityIsFilled(true);
+    }
+    if (style === "") {
+      setStyleIsFilled(false);
+    } else {
+      setStyleIsFilled(true);
+    }
+    if (image === "") {
+      setImageIsFilled(false);
+    } else {
+      setImageIsFilled(true);
+    }
+    if (priceIsFilled && quantityIsFilled && styleIsFilled && imageIsFilled)
+      setAllFilled(true);
+    if (allFilled === true && productDetail[productNum - 1] === undefined) {
+      setProductNum(productNum + 1);
+      const newProductDetail: Omit<ProductDetail, "id" | "productId" | "sold"> =
+        {
+          price,
+          style,
+          quantity,
+          imageLink: image,
+        };
+      const newProductName: Omit<Product, "id" | "sellerDisplayId"> = {
+        productName: name,
+        productDescription: description,
+      };
+      setProductDetail((prevProductDetails) => [
+        ...prevProductDetails,
+        newProductDetail,
+      ]);
+      setProductName((prevProductNames) => [
+        ...prevProductNames,
+        newProductName,
+      ]);
+    }
 
     router.push(`/warehouse`);
   };
