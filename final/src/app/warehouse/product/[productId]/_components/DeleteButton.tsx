@@ -14,7 +14,6 @@ type Props = {
 function DeleteButton({ productId }: Props) {
   return (
     <form
-      className="h-12 rounded-md border-2 bg-white px-4 text-red-500 hover:bg-slate-200 "
       action={async () => {
         const proId = productId;
         await deleteProduct(proId);
@@ -22,7 +21,12 @@ function DeleteButton({ productId }: Props) {
         redirect(`${publicEnv.NEXT_PUBLIC_BASE_URL}/product`);
       }}
     >
-      <button type={"submit"}>delete</button>
+      <button
+        className="h-12 rounded-md border-2 bg-white px-4 text-red-500 hover:bg-slate-200 "
+        type={"submit"}
+      >
+        delete
+      </button>
     </form>
   );
 }

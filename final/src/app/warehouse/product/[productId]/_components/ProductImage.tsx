@@ -8,12 +8,10 @@ type Props = {
   images: {
     productStyle: string;
     productImageLink: string;
-}[];
+  }[];
 };
 
 function ProductImage({ images }: Props) {
-
-  
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState<number>(0);
   const changePhoto = (increment: number) => {
     let newIndex: number = (currentPhotoIndex + increment) % images.length;
@@ -24,7 +22,7 @@ function ProductImage({ images }: Props) {
   };
 
   return (
-    <div>
+    <>
       <button onClick={() => changePhoto(-1)}>
         <Image src="/prev.png" alt="previous arrow" width={30} height={30} />
       </button>
@@ -37,7 +35,7 @@ function ProductImage({ images }: Props) {
       <button onClick={() => changePhoto(1)}>
         <Image src="/next.png" alt="next arrow" width={30} height={30} />
       </button>
-    </div>
+    </>
   );
 }
 
