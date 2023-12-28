@@ -9,17 +9,17 @@ import { productTable, productDetailTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { publicEnv } from "@/lib/env/public";
 import type { Product, ProductDetail } from "@/lib/types";
+import { revalidatePath } from "next/cache";
 
 const addProductSchema = z.object({
   productName: z.string().min(1).max(100),
   productDescription: z.string().min(1).max(300),
 });
 
-export async function addProduct(
-  productName: Product["productName"],
-  productDescription: Product["productDescription"],
-) {
-
+export const addProduct = async(productName: Product["productName"],
+productDescription: Product["productDescription"],
+) => {
+  
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) {
@@ -45,6 +45,8 @@ export async function addProduct(
     .onConflictDoNothing()
     .returning();
 
+    revalidatePath("layout");
+
   const newProduct: Product = {
     id: temp.displayId,
     productName: temp.productName,
@@ -53,7 +55,7 @@ export async function addProduct(
   }
 
   return newProduct;
-}
+};
 
 const addProductDetailSchema = z.object({
   productId: z.string(),
@@ -63,14 +65,14 @@ const addProductDetailSchema = z.object({
   productImageLink: z.string().url(),
 });
 
-export async function addProductDetail(
+export const addProductDetail = async(
   productId: ProductDetail["id"],
   productQuantity: ProductDetail["quantity"],
   productPrice: ProductDetail["price"],
   productStyle: ProductDetail["style"],
   productImageLink: ProductDetail["imageLink"],
-  ) {
-
+  ) => {
+    
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) {

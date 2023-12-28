@@ -7,7 +7,8 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 import type { Product, ProductDetail } from "@/lib/types";
-import { addProduct, addProductDetail } from "./action";
+import { addProduct, addProductDetail } from "../../actions";
+import { publicEnv } from "@/lib/env/public";
 
 
 export default function AddProductForm() {
@@ -61,7 +62,7 @@ export default function AddProductForm() {
     setStyleIsFilled(!!inputValue.trim()); // Will be true if not empty
   };
 
-  const handleNextStep = () => {
+  const handleNextStep = async() => {
     if (name === "") {
       setNameIsFilled(false);
     } else {
@@ -182,14 +183,71 @@ export default function AddProductForm() {
     }
   };
 
-  const handleFinish = async() => {
-    const newPro = await addProduct(name,description);
-    for (let i = 0; i < productDetail.length; i++) {
-      addProductDetail(newPro.id, productDetail[i].quantity, productDetail[i].price, productDetail[i].style, productDetail[i].imageLink);
-    }
-    router.push(`/warehouse`);
-  };
 
+  const handleFinish = async () => {
+    if (price === "") {
+      setPriceIsFilled(false);
+    } else {
+      setPriceIsFilled(true);
+    }
+    if (quantity === 0) {
+      setQuantityIsFilled(false);
+    } else {
+      setQuantityIsFilled(true);
+    }
+    if (style === "") {
+      setStyleIsFilled(false);
+    } else {
+      setStyleIsFilled(true);
+    }
+    if (image === "") {
+      setImageIsFilled(false);
+    } else {
+      setImageIsFilled(true);
+    }
+    if (priceIsFilled && quantityIsFilled && styleIsFilled && imageIsFilled)
+      setAllFilled(true);
+
+    if (allFilled === true && productDetail[productNum - 1] === undefined) {
+      setProductNum(productNum + 1);
+      const newProductDetail: Omit<ProductDetail, "id" | "productId" | "sold"> =
+        {
+          price,
+          style,
+          quantity,
+          imageLink: image,
+        };
+      const newProductName: Omit<Product, "id" | "sellerDisplayId"> = {
+        productName: name,
+        productDescription: description,
+      };
+      setProductDetail((prevProductDetails) => [
+        ...prevProductDetails,
+        newProductDetail,
+      ]);
+      setProductName((prevProductNames) => [
+        ...prevProductNames,
+        newProductName,
+      ]);
+    }
+    (async () => {
+      try {
+        const newProduct = await addProduct(name, description);
+        // for (let i = 0; i < productDetail.length; i++) {
+        //   await addProductDetail(newProduct.id, productDetail[i].quantity, productDetail[i].price, productDetail[i].style, productDetail[i].imageLink);
+        // }
+        productDetail.map(async (detail) => {
+          await addProductDetail(newProduct.id, detail.quantity, detail.price, detail.style, detail.imageLink);
+        })
+    
+        router.push(`${publicEnv.NEXT_PUBLIC_BASE_URL}/warehouse/product/${newProduct.id}`);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+    
+    
+  };
   // handle uploading picture
   const [isDragOver, setIsDragOver] = useState(false);
   const [previewSrc, setPreviewSrc] = useState<string | null>(null);
