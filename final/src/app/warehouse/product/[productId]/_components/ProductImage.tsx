@@ -4,20 +4,16 @@ import { useState } from "react";
 
 import Image from "next/image";
 
-import { auth } from "@/lib/auth";
-
-import { getProductPhotos } from "./actions";
-
 type Props = {
-  productId: string;
+  images: {
+    productStyle: string;
+    productImageLink: string;
+}[];
 };
 
-async function ProductImage({ productId }: Props) {
-  const session = await auth();
-  if (!session?.user?.id) return null;
-  const userId = session.user.id;
+function ProductImage({ images }: Props) {
 
-  const images = await getProductPhotos(productId);
+  
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState<number>(0);
   const changePhoto = (increment: number) => {
     let newIndex: number = (currentPhotoIndex + increment) % images.length;

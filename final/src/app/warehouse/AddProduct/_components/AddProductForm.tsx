@@ -1,68 +1,75 @@
 "use client";
 
 import type { ChangeEvent, DragEvent } from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-import type { Product, ProductDetail } from "@/lib/types";
-import { addProduct, addProductDetail } from "../../actions";
-import { publicEnv } from "@/lib/env/public";
+import type { ProductDetail } from "@/lib/types";
+
 
 
 export default function AddProductForm() {
-  const [name, setName] = useState<string>("");
-  const [price, setPrice] = useState<string>("");
-  const [quantity, setQuantity] = useState<number>(0);
-  const [description, setDescription] = useState<string>("");
-  const [style, setStyle] = useState<string>("");
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const [nameIsFilled, setNameIsFilled] = useState(true);
-  const [allFilled, setAllFilled] = useState(false);
+  const [allFilled, setAllFilled] = useState(true);
   const [priceIsFilled, setPriceIsFilled] = useState(true);
-  const [image, setImage] = useState<string>("");
   const [imageIsFilled, setImageIsFilled] = useState(true);
   const [quantityIsFilled, setQuantityIsFilled] = useState(true);
   const [styleIsFilled, setStyleIsFilled] = useState(true);
   const [desciptionIsFilled, setDescriptionIsFilled] = useState(true);
-  const [productNum, setProductNum] = useState<number>(1);
+  const [currentIndex, setCurrentIndex] = useState<number>(-1);
   const [productDetail, setProductDetail] = useState<
     Omit<ProductDetail, "id" | "productId" | "sold">[]
-  >([]);
-  const [productName, setProductName] = useState<
-    Omit<Product, "id" | "sellerDisplayId">[]
-  >([]);
-  const [lastProduct, setLastProduct] = useState(false);
-  const [isNext, setIsNext] = useState(true);
+  >([{price: "", style: "", quantity: 0, imageLink: ""}]);
+
   const router = useRouter();
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
-    setName(inputValue);
     setNameIsFilled(!!inputValue.trim()); // Will be true if not empty
+    if (nameIsFilled) {
+      setName(inputValue);
+    }
   };
   const handleDescriptionChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
-    setDescription(inputValue);
     setDescriptionIsFilled(!!inputValue.trim()); // Will be true if not empty
+    if (desciptionIsFilled) {
+      setDescription(inputValue);
+    }
   };
   const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
-    setPrice(inputValue);
     setPriceIsFilled(!!inputValue.trim()); // Will be true if not empty
+    if (priceIsFilled) {
+      const temp = productDetail;
+      temp[currentIndex].price = inputValue;
+      setProductDetail(temp);
+    }
   };
   const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     const inputNum = parseInt(inputValue, 10);
-    setQuantity(inputNum);
     setQuantityIsFilled(!!inputValue.trim()); // Will be true if not empty
+    if (quantityIsFilled) {
+      const temp = productDetail;
+      temp[currentIndex].quantity = inputNum;
+      setProductDetail(temp);
+    }
   };
   const handleStyleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
-    setStyle(inputValue);
     setStyleIsFilled(!!inputValue.trim()); // Will be true if not empty
+    if (styleIsFilled) {
+      const temp = productDetail;
+      temp[currentIndex].style = inputValue;
+      setProductDetail(temp);
+    }
   };
 
-  const handleNextStep = async() => {
+  const handleNextStep = () => {
     if (name === "") {
       setNameIsFilled(false);
     } else {
@@ -75,7 +82,10 @@ export default function AddProductForm() {
     }
     if (nameIsFilled && desciptionIsFilled) setAllFilled(true);
     if (allFilled === true) {
-      setIsNext(false);
+      const newStyle: Omit<ProductDetail, "id" | "productId" | "sold">
+       = {price: "", style: "", quantity: 0, imageLink: ""};
+      setProductDetail((productDetail) => [...productDetail, newStyle]);
+      setCurrentIndex(currentIndex + 1);
       setAllFilled(false);
     }
   };
@@ -84,170 +94,24 @@ export default function AddProductForm() {
     router.push("/warehouse");
   };
 
-  useEffect(() => {
-    console.log(productDetail);
-    console.log(productName);
-  }, [productDetail, productName]);
-
   const handleNextStyle = () => {
-    setPrice(productDetail[productNum].price);
-    setQuantity(productDetail[productNum].quantity);
-    setStyle(productDetail[productNum].style);
-    setImage(productDetail[productNum].imageLink);
-    setPreviewSrc(productDetail[productNum].imageLink);
-    if (productDetail[productNum + 1] === undefined) {
-      setLastProduct(false);
+    if (quantityIsFilled && priceIsFilled && imageIsFilled && styleIsFilled) setAllFilled(true);
+    else setAllFilled(false);
+    if (allFilled === true) {
+      const newStyle: Omit<ProductDetail, "id" | "productId" | "sold">
+       = {price: "", style: "", quantity: 0, imageLink: ""};
+      setProductDetail((productDetail) => [...productDetail, newStyle]);
+      setCurrentIndex(currentIndex + 1);
+      console.log(productDetail);
+    } else {
+      return;
     }
-    setProductNum(productNum + 1);
   };
 
   const handleLastStep = () => {
-    if (productDetail[productNum - 1] === undefined) {
-      setLastProduct(false);
-    } else {
-      setLastProduct(true);
-    }
-    if (productNum === 1) {
-      setIsNext(true);
-    } else {
-      setPrice(productDetail[productNum - 2].price);
-      setQuantity(productDetail[productNum - 2].quantity);
-      setStyle(productDetail[productNum - 2].style);
-      // setSize(productDetail[productNum - 2].size);
-      setImage(productDetail[productNum - 2].imageLink);
-      setPreviewSrc(productDetail[productNum - 2].imageLink);
-      setProductNum(productNum - 1);
-    }
+    setCurrentIndex(currentIndex - 1);
   };
 
-  const handleNextProduct = () => {
-    if (price === "") {
-      setPriceIsFilled(false);
-    } else {
-      setPriceIsFilled(true);
-    }
-    if (quantity === 0) {
-      setQuantityIsFilled(false);
-    } else {
-      setQuantityIsFilled(true);
-    }
-    if (style === "") {
-      setStyleIsFilled(false);
-    } else {
-      setStyleIsFilled(true);
-    }
-    if (image === "") {
-      setImageIsFilled(false);
-    } else {
-      setImageIsFilled(true);
-    }
-    if (priceIsFilled && quantityIsFilled && styleIsFilled && imageIsFilled)
-      setAllFilled(true);
-    if (allFilled === true && productDetail[productNum - 1] === undefined) {
-      setProductNum(productNum + 1);
-      const newProductDetail: Omit<ProductDetail, "id" | "productId" | "sold"> =
-        {
-          price,
-          style,
-          quantity,
-          imageLink: image,
-        };
-      const newProductName: Omit<Product, "id" | "sellerDisplayId"> = {
-        productName: name,
-        productDescription: description,
-      };
-      setProductDetail((prevProductDetails) => [
-        ...prevProductDetails,
-        newProductDetail,
-      ]);
-      setProductName((prevProductNames) => [
-        ...prevProductNames,
-        newProductName,
-      ]);
-
-      //clear all the existing data
-      setPrice("");
-      setStyle("");
-      setQuantity(0);
-      setImage("");
-      setPreviewSrc(null);
-    }
-    if (productDetail[productNum - 1] !== undefined) {
-      setProductNum(productNum + 1);
-      //clear all the existing data
-      setPrice("");
-      setStyle("");
-      setQuantity(0);
-      setImage("");
-      setPreviewSrc(null);
-    }
-  };
-
-
-  const handleFinish = async () => {
-    if (price === "") {
-      setPriceIsFilled(false);
-    } else {
-      setPriceIsFilled(true);
-    }
-    if (quantity === 0) {
-      setQuantityIsFilled(false);
-    } else {
-      setQuantityIsFilled(true);
-    }
-    if (style === "") {
-      setStyleIsFilled(false);
-    } else {
-      setStyleIsFilled(true);
-    }
-    if (image === "") {
-      setImageIsFilled(false);
-    } else {
-      setImageIsFilled(true);
-    }
-    if (priceIsFilled && quantityIsFilled && styleIsFilled && imageIsFilled)
-      setAllFilled(true);
-
-    if (allFilled === true && productDetail[productNum - 1] === undefined) {
-      setProductNum(productNum + 1);
-      const newProductDetail: Omit<ProductDetail, "id" | "productId" | "sold"> =
-        {
-          price,
-          style,
-          quantity,
-          imageLink: image,
-        };
-      const newProductName: Omit<Product, "id" | "sellerDisplayId"> = {
-        productName: name,
-        productDescription: description,
-      };
-      setProductDetail((prevProductDetails) => [
-        ...prevProductDetails,
-        newProductDetail,
-      ]);
-      setProductName((prevProductNames) => [
-        ...prevProductNames,
-        newProductName,
-      ]);
-    }
-    (async () => {
-      try {
-        const newProduct = await addProduct(name, description);
-        // for (let i = 0; i < productDetail.length; i++) {
-        //   await addProductDetail(newProduct.id, productDetail[i].quantity, productDetail[i].price, productDetail[i].style, productDetail[i].imageLink);
-        // }
-        productDetail.map(async (detail) => {
-          await addProductDetail(newProduct.id, detail.quantity, detail.price, detail.style, detail.imageLink);
-        })
-    
-        router.push(`${publicEnv.NEXT_PUBLIC_BASE_URL}/warehouse/product/${newProduct.id}`);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-    
-    
-  };
   // handle uploading picture
   const [isDragOver, setIsDragOver] = useState(false);
   const [previewSrc, setPreviewSrc] = useState<string | null>(null);
@@ -281,15 +145,17 @@ export default function AddProductForm() {
       reader.readAsDataURL(file);
       reader.onload = () => {
         setPreviewSrc(reader.result as string);
-        setImage(reader.result as string);
         setImageIsFilled(true);
+        const temp = productDetail;
+        temp[currentIndex].imageLink = reader.result as string;
+        setProductDetail(temp);
       };
     }
   };
 
   return (
     <>
-      {isNext === true && (
+      {currentIndex === -1 && (
         <div className="min-w-[400px] rounded-2xl border-2 border-black bg-white p-4">
           <div className="mt-5 flex flex-col gap-2">
             <div className="flex flex-col gap-4 px-10">
@@ -346,11 +212,11 @@ export default function AddProductForm() {
           </div>
         </div>
       )}
-      {isNext === false && (
+      {currentIndex !== -1 && (
         <div className="min-w-[400px] rounded-2xl border-2 border-black bg-white p-4">
           <div className="flex">
             <p className="text-sm text-gray-500">Style No.</p>
-            <p className="text-sm text-gray-500">{productNum}</p>
+            <p className="text-sm text-gray-500">{currentIndex + 1}</p>
           </div>
           <div className="mt-5 flex flex-col gap-2">
             <div className="flex flex-col gap-4 px-10">
@@ -364,7 +230,7 @@ export default function AddProductForm() {
                 <input
                   id="Price"
                   type="price"
-                  value={price}
+                  value={productDetail[currentIndex].price ?? ""}
                   onChange={handlePriceChange}
                   className="mt-1 w-full bg-gray-100"
                 />
@@ -380,7 +246,7 @@ export default function AddProductForm() {
                   <input
                     id="style"
                     type="style_type"
-                    value={style}
+                    value={productDetail[currentIndex].style ?? ""}
                     onChange={handleStyleChange}
                     className="mt-1 w-full bg-gray-100"
                   />
@@ -396,7 +262,7 @@ export default function AddProductForm() {
                 <input
                   id="Quantity"
                   type="number"
-                  value={quantity}
+                  value={productDetail[currentIndex].quantity ?? 0}
                   onChange={handleQuantityChange}
                   className="mt-2 w-full bg-gray-100"
                 />
@@ -468,17 +334,17 @@ export default function AddProductForm() {
                 >
                   Last Step
                 </button>
-                {lastProduct === false && (
+                {currentIndex === productDetail.length - 1 && (
                   <button
                     data-testid="add-submit-button"
                     // type="submit"
                     className="mb-3 w-full rounded-lg border-2 py-1 text-sm hover:bg-slate-100"
-                    onClick={handleNextProduct}
+                    onClick={handleNextStyle}
                   >
                     Add another style
                   </button>
                 )}
-                {lastProduct === true && (
+                {currentIndex !== productDetail.length - 1 && (
                   <button
                     data-testid="add-submit-button"
                     // type="submit"
@@ -493,7 +359,6 @@ export default function AddProductForm() {
                 data-testid="add-submit-button"
                 // type="submit"
                 className="mb-3 w-full rounded-lg border-2 bg-teal-900 py-1 text-sm text-white hover:bg-teal-700"
-                onClick={handleFinish}
               >
                 Finish
               </button>

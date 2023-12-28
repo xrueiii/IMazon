@@ -2,15 +2,23 @@
 
 import { useState } from "react";
 
-import { getProductDetail_1, getProductDetail_2 } from "./actions";
 
 type Props = {
-  productId: string;
+  detail_1: {
+    productName: string;
+    productDescription: string;
+    sellerdisplayId: string;
+  };
+
+  detail_2: {
+    productQuantity: number;
+    productSold: number | null;
+    productPrice: string;
+    productStyle: string;
+  }[];
 };
 
-async function ProductDetail({ productId }: Props) {
-  const detail_1 = await getProductDetail_1(productId);
-  const detail_2 = await getProductDetail_2(productId);
+function ProductDetail({ detail_1, detail_2 }: Props) {
 
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isHovered, setIsHovered] = useState<boolean>(false);
