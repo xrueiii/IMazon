@@ -1,52 +1,84 @@
 "use client";
 
 import type { ChangeEvent, DragEvent } from "react";
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 
-import type { ProductDetail } from "@/lib/types";
+import type { Product, ProductDetail } from "@/lib/types";
 
-
+import FinishAdding from "./FinishAdding";
 
 export default function AddProductForm() {
-  const nameInputRef = useRef<HTMLInputElement>(null);
-  const descriptionInputRef = useRef<HTMLInputElement>(null);
-  const priceInputRef = useRef<HTMLInputElement>(null);
-  const quantityInputRef = useRef<HTMLInputElement>(null);
-  const styleInputRef = useRef<HTMLInputElement>(null);
-
+  const [name, setName] = useState<string>("");
+  const [price, setPrice] = useState<string>("");
+  const [quantity, setQuantity] = useState<number>(0);
+  const [description, setDescription] = useState<string>("");
+  const [style, setStyle] = useState<string>("");
+  const [image, setImage] = useState<string>("");
   const [nameIsFilled, setNameIsFilled] = useState(true);
-  const [descriptionIsFilled, setDescriptionIsFilled] = useState(true);
-  const [priceIsFilled, setPriceIsFilled] = useState(true);
-  const [styleIsFilled, setStyleIsFilled] = useState(true);
-  const [quantityIsFilled, setQuantityIsFilled] = useState(true);
   const [allFilled, setAllFilled] = useState(false);
+  const [priceIsFilled, setPriceIsFilled] = useState(true);
   const [imageIsFilled, setImageIsFilled] = useState(true);
-  const [image, setImage] = useState("");
-  const [currentIndex, setCurrentIndex] = useState<number>(-1);
+  const [quantityIsFilled, setQuantityIsFilled] = useState(true);
+  const [styleIsFilled, setStyleIsFilled] = useState(true);
+  const [desciptionIsFilled, setDescriptionIsFilled] = useState(true);
+  const [productNum, setProductNum] = useState<number>(1);
   const [productDetail, setProductDetail] = useState<
     Omit<ProductDetail, "id" | "productId" | "sold">[]
   >([]);
-
+  const [productName, setProductName] = useState<
+    Omit<Product, "id" | "sellerDisplayId">[]
+  >([]);
+  const [lastProduct, setLastProduct] = useState(false);
+  const [isNext, setIsNext] = useState(true);
   const router = useRouter();
-  
 
-  const handleNextStep = () => {
-    if (nameInputRef.current?.value === "") {
+  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    setName(inputValue);
+    setNameIsFilled(!!inputValue.trim()); // Will be true if not empty
+  };
+
+  const handleDescriptionChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    setDescription(inputValue);
+    setDescriptionIsFilled(!!inputValue.trim()); // Will be true if not empty
+  };
+
+  const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    setPrice(inputValue);
+    setPriceIsFilled(!!inputValue.trim()); // Will be true if not empty
+  };
+
+  const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    const inputNum = parseInt(inputValue, 10);
+    setQuantity(inputNum);
+    setQuantityIsFilled(!!inputValue.trim()); // Will be true if not empty
+  };
+
+  const handleStyleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    setStyle(inputValue);
+    setStyleIsFilled(!!inputValue.trim()); // Will be true if not empty
+  };
+
+  const handleNextStep = async () => {
+    if (name === "") {
       setNameIsFilled(false);
     } else {
       setNameIsFilled(true);
     }
-    if (descriptionInputRef.current?.value === "") {
+    if (description === "") {
       setDescriptionIsFilled(false);
     } else {
       setDescriptionIsFilled(true);
     }
-    if (nameIsFilled && descriptionIsFilled) setAllFilled(true);
+    if (nameIsFilled && desciptionIsFilled) setAllFilled(true);
     if (allFilled === true) {
-      setCurrentIndex(currentIndex + 1);
+      setIsNext(false);
       setAllFilled(false);
     }
   };
@@ -55,52 +87,108 @@ export default function AddProductForm() {
     router.push("/warehouse");
   };
 
-  const handleNextStyle = () => {
-    if (parseInt(quantityInputRef.current?.value ?? "") === 0) {
-      setQuantityIsFilled(false);
-    } else {
-      setQuantityIsFilled(true);
-      
-    }
+  useEffect(() => {
+    console.log(productDetail);
+    console.log(productName);
+  }, [productDetail, productName]);
 
-    if (priceInputRef.current?.value === "") {
+  const handleNextStyle = () => {
+    setPrice(productDetail[productNum].price);
+    setQuantity(productDetail[productNum].quantity);
+    setStyle(productDetail[productNum].style);
+    setImage(productDetail[productNum].imageLink);
+    setPreviewSrc(productDetail[productNum].imageLink);
+    if (productDetail[productNum + 1] === undefined) {
+      setLastProduct(false);
+    }
+    setProductNum(productNum + 1);
+  };
+
+  const handleLastStep = () => {
+    if (productDetail[productNum - 1] === undefined) {
+      setLastProduct(false);
+    } else {
+      setLastProduct(true);
+    }
+    if (productNum === 1) {
+      setIsNext(true);
+    } else {
+      setPrice(productDetail[productNum - 2].price);
+      setQuantity(productDetail[productNum - 2].quantity);
+      setStyle(productDetail[productNum - 2].style);
+      // setSize(productDetail[productNum - 2].size);
+      setImage(productDetail[productNum - 2].imageLink);
+      setPreviewSrc(productDetail[productNum - 2].imageLink);
+      setProductNum(productNum - 1);
+    }
+  };
+
+  useEffect(() => {
+    if (price === "") {
       setPriceIsFilled(false);
     } else {
       setPriceIsFilled(true);
-      
     }
-
-    if (styleInputRef.current?.value === "") {
+    if (quantity === 0) {
+      setQuantityIsFilled(false);
+    } else {
+      setQuantityIsFilled(true);
+    }
+    if (style === "") {
       setStyleIsFilled(false);
     } else {
       setStyleIsFilled(true);
     }
-
-
-
-    if (imageIsFilled) setAllFilled(true);
-
-    if (allFilled === true) {
-      const newStyle: Omit<ProductDetail, "id" | "productId" | "sold">
-       = {price: priceInputRef.current?.value ?? "", style: styleInputRef.current?.value ?? "", quantity: parseInt(quantityInputRef.current?.value ?? ""), imageLink: image};
-      setProductDetail((productDetail) => [...productDetail, newStyle]);
-      setCurrentIndex(currentIndex + 1);
-      if(priceInputRef.current?.value) 
-        priceInputRef.current.value = "";
-      if(quantityInputRef.current?.value) 
-        quantityInputRef.current.value = "";
-      if(styleInputRef.current?.value) 
-        styleInputRef.current.value = "";
-      if (previewSrc)
-        setPreviewSrc("");
-
+    if (image === "") {
+      setImageIsFilled(false);
     } else {
-      return;
+      setImageIsFilled(true);
     }
-  };
+    if (priceIsFilled && quantityIsFilled && styleIsFilled && imageIsFilled)
+      setAllFilled(true);
+  }, [price, quantity, style, image]);
 
-  const handleLastStep = () => {
-    setCurrentIndex(currentIndex - 1);
+  const handleNextProduct = () => {
+    if (allFilled === true && productDetail[productNum - 1] === undefined) {
+      setProductNum(productNum + 1);
+      const newProductDetail: Omit<ProductDetail, "id" | "productId" | "sold"> =
+        {
+          price,
+          style,
+          quantity,
+          imageLink: image,
+        };
+      const newProductName: Omit<Product, "id" | "sellerDisplayId"> = {
+        productName: name,
+        productDescription: description,
+      };
+      setProductDetail((prevProductDetails) => [
+        ...prevProductDetails,
+        newProductDetail,
+      ]);
+      setProductName((prevProductNames) => [
+        ...prevProductNames,
+        newProductName,
+      ]);
+
+      //clear all the existing data
+      setPrice("");
+      setStyle("");
+      setQuantity(0);
+      setImage("");
+      setPreviewSrc(null);
+      // setAllFilled(false);
+    }
+    if (productDetail[productNum - 1] !== undefined) {
+      setProductNum(productNum + 1);
+      //clear all the existing data
+      setPrice("");
+      setStyle("");
+      setQuantity(0);
+      setImage("");
+      setPreviewSrc(null);
+      // setAllFilled(false);
+    }
   };
 
   // handle uploading picture
@@ -136,15 +224,15 @@ export default function AddProductForm() {
       reader.readAsDataURL(file);
       reader.onload = () => {
         setPreviewSrc(reader.result as string);
-        setImageIsFilled(true);
         setImage(reader.result as string);
+        setImageIsFilled(true);
       };
     }
   };
 
   return (
     <>
-      {currentIndex === -1 && (
+      {isNext === true && (
         <div className="min-w-[400px] rounded-2xl border-2 border-black bg-white p-4">
           <div className="mt-5 flex flex-col gap-2">
             <div className="flex flex-col gap-4 px-10">
@@ -158,13 +246,14 @@ export default function AddProductForm() {
                 <input
                   id="Name"
                   type="name"
-                  ref={nameInputRef}
+                  value={name}
+                  onChange={handleNameChange}
                   className="mt-1 w-full bg-gray-100"
                 />
               </div>
               <div className="w-full">
                 <p className="font-semibold">Description</p>
-                {descriptionIsFilled === false && (
+                {desciptionIsFilled === false && (
                   <p className="text-xs text-red-500">
                     *You haven't fill this column
                   </p>
@@ -172,7 +261,8 @@ export default function AddProductForm() {
                 <input
                   id="description"
                   type="description"
-                  ref={descriptionInputRef}
+                  value={description}
+                  onChange={handleDescriptionChange}
                   className="mt-1 w-full bg-gray-100"
                 ></input>
               </div>
@@ -199,11 +289,11 @@ export default function AddProductForm() {
           </div>
         </div>
       )}
-      {currentIndex !== -1 && (
+      {isNext === false && (
         <div className="min-w-[400px] rounded-2xl border-2 border-black bg-white p-4">
           <div className="flex">
             <p className="text-sm text-gray-500">Style No.</p>
-            <p className="text-sm text-gray-500">{currentIndex + 1}</p>
+            <p className="text-sm text-gray-500">{productNum}</p>
           </div>
           <div className="mt-5 flex flex-col gap-2">
             <div className="flex flex-col gap-4 px-10">
@@ -217,7 +307,8 @@ export default function AddProductForm() {
                 <input
                   id="Price"
                   type="price"
-                  ref={priceInputRef}
+                  value={price}
+                  onChange={handlePriceChange}
                   className="mt-1 w-full bg-gray-100"
                 />
               </div>
@@ -232,7 +323,8 @@ export default function AddProductForm() {
                   <input
                     id="style"
                     type="style_type"
-                    ref={styleInputRef}
+                    value={style}
+                    onChange={handleStyleChange}
                     className="mt-1 w-full bg-gray-100"
                   />
                 </div>
@@ -247,7 +339,8 @@ export default function AddProductForm() {
                 <input
                   id="Quantity"
                   type="number"
-                  ref={quantityInputRef}
+                  value={quantity}
+                  onChange={handleQuantityChange}
                   className="mt-2 w-full bg-gray-100"
                 />
               </div>
@@ -318,17 +411,17 @@ export default function AddProductForm() {
                 >
                   Last Step
                 </button>
-                {currentIndex === productDetail.length && (
+                {lastProduct === false && (
                   <button
                     data-testid="add-submit-button"
                     // type="submit"
                     className="mb-3 w-full rounded-lg border-2 py-1 text-sm hover:bg-slate-100"
-                    onClick={handleNextStyle}
+                    onClick={handleNextProduct}
                   >
                     Add another style
                   </button>
                 )}
-                {currentIndex !== productDetail.length && (
+                {lastProduct === true && (
                   <button
                     data-testid="add-submit-button"
                     // type="submit"
@@ -338,6 +431,7 @@ export default function AddProductForm() {
                     Next style
                   </button>
                 )}
+                <FinishAdding />
               </div>
             </div>
           </div>

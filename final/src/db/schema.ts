@@ -64,13 +64,13 @@ export const productDetailTable = pgTable(
     productSold: integer("product_sold").default(0),
     productPrice: varchar("product_price", { length: 20 }).notNull(),
     productImageLink: varchar("product_image_link").notNull(),
-    productStyle: varchar("product_color", { length: 20 }).notNull(),
     productId: uuid("product_id")
       .notNull()
       .references(() => productTable.displayId, {
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
+    productStyle: varchar("product_color", { length: 20 }).notNull(),
   },
   (table) => ({
     productNameIndex: index("display_id_index").on(table.displayId),
