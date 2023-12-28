@@ -1,90 +1,52 @@
 "use client";
 
 import type { ChangeEvent, DragEvent } from "react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 import type { ProductDetail } from "@/lib/types";
+import FinishButton from "./FinishButton";
 
 
 
 export default function AddProductForm() {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const descriptionInputRef = useRef<HTMLInputElement>(null);
+  const priceInputRef = useRef<HTMLInputElement>(null);
+  const quantityInputRef = useRef<HTMLInputElement>(null);
+  const styleInputRef = useRef<HTMLInputElement>(null);
+
   const [nameIsFilled, setNameIsFilled] = useState(true);
-  const [allFilled, setAllFilled] = useState(true);
+  const [descriptionIsFilled, setDescriptionIsFilled] = useState(true);
   const [priceIsFilled, setPriceIsFilled] = useState(true);
-  const [imageIsFilled, setImageIsFilled] = useState(true);
-  const [quantityIsFilled, setQuantityIsFilled] = useState(true);
   const [styleIsFilled, setStyleIsFilled] = useState(true);
-  const [desciptionIsFilled, setDescriptionIsFilled] = useState(true);
+  const [quantityIsFilled, setQuantityIsFilled] = useState(true);
+  const [allFilled, setAllFilled] = useState(false);
+  const [imageIsFilled, setImageIsFilled] = useState(true);
+  const [image, setImage] = useState("");
   const [currentIndex, setCurrentIndex] = useState<number>(-1);
   const [productDetail, setProductDetail] = useState<
     Omit<ProductDetail, "id" | "productId" | "sold">[]
-  >([{price: "", style: "", quantity: 0, imageLink: ""}]);
+  >([]);
 
   const router = useRouter();
-  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    setNameIsFilled(!!inputValue.trim()); // Will be true if not empty
-    if (nameIsFilled) {
-      setName(inputValue);
-    }
-  };
-  const handleDescriptionChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    setDescriptionIsFilled(!!inputValue.trim()); // Will be true if not empty
-    if (desciptionIsFilled) {
-      setDescription(inputValue);
-    }
-  };
-  const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    setPriceIsFilled(!!inputValue.trim()); // Will be true if not empty
-    if (priceIsFilled) {
-      const temp = productDetail;
-      temp[currentIndex].price = inputValue;
-      setProductDetail(temp);
-    }
-  };
-  const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    const inputNum = parseInt(inputValue, 10);
-    setQuantityIsFilled(!!inputValue.trim()); // Will be true if not empty
-    if (quantityIsFilled) {
-      const temp = productDetail;
-      temp[currentIndex].quantity = inputNum;
-      setProductDetail(temp);
-    }
-  };
-  const handleStyleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    setStyleIsFilled(!!inputValue.trim()); // Will be true if not empty
-    if (styleIsFilled) {
-      const temp = productDetail;
-      temp[currentIndex].style = inputValue;
-      setProductDetail(temp);
-    }
-  };
+  
 
   const handleNextStep = () => {
-    if (name === "") {
+    if (nameInputRef.current?.value === "") {
       setNameIsFilled(false);
     } else {
       setNameIsFilled(true);
     }
-    if (description === "") {
+    if (descriptionInputRef.current?.value === "") {
       setDescriptionIsFilled(false);
     } else {
       setDescriptionIsFilled(true);
     }
-    if (nameIsFilled && desciptionIsFilled) setAllFilled(true);
+    if (nameIsFilled && descriptionIsFilled) setAllFilled(true);
     if (allFilled === true) {
-      const newStyle: Omit<ProductDetail, "id" | "productId" | "sold">
-       = {price: "", style: "", quantity: 0, imageLink: ""};
-      setProductDetail((productDetail) => [...productDetail, newStyle]);
       setCurrentIndex(currentIndex + 1);
       setAllFilled(false);
     }
@@ -95,14 +57,44 @@ export default function AddProductForm() {
   };
 
   const handleNextStyle = () => {
-    if (quantityIsFilled && priceIsFilled && imageIsFilled && styleIsFilled) setAllFilled(true);
-    else setAllFilled(false);
+    if (parseInt(quantityInputRef.current?.value ?? "") === 0) {
+      setQuantityIsFilled(false);
+    } else {
+      setQuantityIsFilled(true);
+      
+    }
+
+    if (priceInputRef.current?.value === "") {
+      setPriceIsFilled(false);
+    } else {
+      setPriceIsFilled(true);
+      
+    }
+
+    if (styleInputRef.current?.value === "") {
+      setStyleIsFilled(false);
+    } else {
+      setStyleIsFilled(true);
+    }
+
+
+
+    if (imageIsFilled) setAllFilled(true);
+
     if (allFilled === true) {
       const newStyle: Omit<ProductDetail, "id" | "productId" | "sold">
-       = {price: "", style: "", quantity: 0, imageLink: ""};
+       = {price: priceInputRef.current?.value ?? "", style: styleInputRef.current?.value ?? "", quantity: parseInt(quantityInputRef.current?.value ?? ""), imageLink: image};
       setProductDetail((productDetail) => [...productDetail, newStyle]);
       setCurrentIndex(currentIndex + 1);
-      console.log(productDetail);
+      if(priceInputRef.current?.value) 
+        priceInputRef.current.value = "";
+      if(quantityInputRef.current?.value) 
+        quantityInputRef.current.value = "";
+      if(styleInputRef.current?.value) 
+        styleInputRef.current.value = "";
+      if (previewSrc)
+        setPreviewSrc("");
+
     } else {
       return;
     }
@@ -146,9 +138,7 @@ export default function AddProductForm() {
       reader.onload = () => {
         setPreviewSrc(reader.result as string);
         setImageIsFilled(true);
-        const temp = productDetail;
-        temp[currentIndex].imageLink = reader.result as string;
-        setProductDetail(temp);
+        setImage(reader.result as string);
       };
     }
   };
@@ -169,14 +159,13 @@ export default function AddProductForm() {
                 <input
                   id="Name"
                   type="name"
-                  value={name}
-                  onChange={handleNameChange}
+                  ref={nameInputRef}
                   className="mt-1 w-full bg-gray-100"
                 />
               </div>
               <div className="w-full">
                 <p className="font-semibold">Description</p>
-                {desciptionIsFilled === false && (
+                {descriptionIsFilled === false && (
                   <p className="text-xs text-red-500">
                     *You haven't fill this column
                   </p>
@@ -184,8 +173,7 @@ export default function AddProductForm() {
                 <input
                   id="description"
                   type="description"
-                  value={description}
-                  onChange={handleDescriptionChange}
+                  ref={descriptionInputRef}
                   className="mt-1 w-full bg-gray-100"
                 ></input>
               </div>
@@ -207,6 +195,7 @@ export default function AddProductForm() {
                 >
                   Next Step
                 </button>
+                <FinishButton name="test" description="tttrhejh"/>
               </div>
             </div>
           </div>
@@ -230,8 +219,7 @@ export default function AddProductForm() {
                 <input
                   id="Price"
                   type="price"
-                  value={productDetail[currentIndex].price ?? ""}
-                  onChange={handlePriceChange}
+                  ref={priceInputRef}
                   className="mt-1 w-full bg-gray-100"
                 />
               </div>
@@ -246,8 +234,7 @@ export default function AddProductForm() {
                   <input
                     id="style"
                     type="style_type"
-                    value={productDetail[currentIndex].style ?? ""}
-                    onChange={handleStyleChange}
+                    ref={styleInputRef}
                     className="mt-1 w-full bg-gray-100"
                   />
                 </div>
@@ -262,8 +249,7 @@ export default function AddProductForm() {
                 <input
                   id="Quantity"
                   type="number"
-                  value={productDetail[currentIndex].quantity ?? 0}
-                  onChange={handleQuantityChange}
+                  ref={quantityInputRef}
                   className="mt-2 w-full bg-gray-100"
                 />
               </div>
@@ -334,7 +320,7 @@ export default function AddProductForm() {
                 >
                   Last Step
                 </button>
-                {currentIndex === productDetail.length - 1 && (
+                {currentIndex === productDetail.length && (
                   <button
                     data-testid="add-submit-button"
                     // type="submit"
@@ -344,7 +330,7 @@ export default function AddProductForm() {
                     Add another style
                   </button>
                 )}
-                {currentIndex !== productDetail.length - 1 && (
+                {currentIndex !== productDetail.length && (
                   <button
                     data-testid="add-submit-button"
                     // type="submit"
@@ -355,13 +341,7 @@ export default function AddProductForm() {
                   </button>
                 )}
               </div>
-              <button
-                data-testid="add-submit-button"
-                // type="submit"
-                className="mb-3 w-full rounded-lg border-2 bg-teal-900 py-1 text-sm text-white hover:bg-teal-700"
-              >
-                Finish
-              </button>
+              <FinishButton name="test" description="tttrhejh"/>
             </div>
           </div>
         </div>
