@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 import type { ProductDetail } from "@/lib/types";
-import FinishButton from "./FinishButton";
 
 
 
@@ -195,7 +194,6 @@ export default function AddProductForm() {
                 >
                   Next Step
                 </button>
-                <FinishButton name="test" description="tttrhejh"/>
               </div>
             </div>
           </div>
@@ -341,7 +339,6 @@ export default function AddProductForm() {
                   </button>
                 )}
               </div>
-              <FinishButton name="test" description="tttrhejh"/>
             </div>
           </div>
         </div>
