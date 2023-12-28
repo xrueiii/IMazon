@@ -1,3 +1,5 @@
+"use server";
+
 import { eq } from "drizzle-orm";
 
 import { db } from "@/db";
@@ -14,7 +16,6 @@ export async function getProductPhotos(productId: string) {
 }
 
 export const deleteProduct = async (productId: string) => {
-  "use server";
   console.log("[deleteProduct]");
   await db.delete(productTable).where(eq(productTable.displayId, productId));
   return;

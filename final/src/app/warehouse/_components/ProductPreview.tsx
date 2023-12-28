@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getProductDetails } from "./action";
+import Link from "next/link";
 
 type ProductPreviewProps = {
     productId: string;
@@ -19,17 +20,21 @@ export default async function ProductPreview({productId, productName}: ProductPr
         totalSold += productDetails[i].sold ?? 0;
     }
     return (
-        <div className="flex-col p-6 border-2 rounded-md gap-2 items-center">
-            <Image src="/productTest.jpeg" alt="product_pic" width={250} height={50}></Image>
-            <div className="flex justify-between mt-2">
-                <p>{productName}</p>
-                <p className="text-lg font-semibold">{"NTD " + minPrice}</p>
+        <Link href={{
+            pathname: `/warehouse/product`,
+          }}>
+            <div className="flex-col p-6 border-2 rounded-md gap-2 items-center">
+                <Image src="/productTest.jpeg" alt="product_pic" width={250} height={50}></Image>
+                <div className="flex justify-between mt-2">
+                    <p>{productName}</p>
+                    <p className="text-lg font-semibold">{"NTD " + minPrice}</p>
+                </div>
+                
+                <div className="flex justify-between mt-2">
+                    <p className="text-gray-500 text-sm">Quantity: {totalQuantity}</p>
+                    <p className="text-gray-500 text-sm">Sold: {totalSold}</p>
+                </div>
             </div>
-            
-            <div className="flex justify-between mt-2">
-                <p className="text-gray-500 text-sm">Quantity: {totalQuantity}</p>
-                <p className="text-gray-500 text-sm">Sold: {totalSold}</p>
-            </div>
-        </div>
+        </Link>
     );
 }

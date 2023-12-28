@@ -16,7 +16,6 @@ function DeleteButton({ productId }: Props) {
     <form
       className="h-12 rounded-md border-2 bg-white px-4 text-red-500 hover:bg-slate-200 "
       action={async () => {
-        "use server";
         const proId = productId;
         await deleteProduct(proId);
         revalidatePath("/product");
