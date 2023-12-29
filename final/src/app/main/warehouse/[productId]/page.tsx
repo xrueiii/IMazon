@@ -1,12 +1,16 @@
 import { auth } from "@/lib/auth";
 // import DeleteButton from "./_components/DeleteButton";
 // import EditButton from "./_components/EditButton";
+import type { Product } from "@/lib/types";
+
+import EditButton from "./_components/EditButton";
 import ProductDescription from "./_components/ProductDescription";
 import ProductDetail from "./_components/ProductDetail";
 import ReviewInput from "./_components/ReviewInput";
 import StarOutlineIcon from '@mui/icons-material/StarOutline';
 import StarRateIcon from '@mui/icons-material/StarRate';
 import {
+  getProductDetail,
   getProductDetail_1,
   getProductDetail_2,
   getProductPhotos,
@@ -53,14 +57,22 @@ async function ProductPage({ params }: Props) {
   if (!userId) {
     redirect(`${publicEnv.NEXT_PUBLIC_BASE_URL}`);
   }
+
+  // const stylesId = await getAllStyleId(params.productId);
+  const productName: Omit<Product, "id" | "sellerDisplayId"> = {
+    productName: detail_1.productName,
+    productDescription: detail_1.productDescription,
+  };
+  const detail = await getProductDetail(params.productId);
   return (
     <div className="flex h-full w-full grow flex-wrap justify-center overflow-y-scroll rounded-b-xl border-2 px-10">
       <div className="flex w-full flex-wrap bg-white">
-        {/* <div className="flex h-24 w-full items-center justify-end gap-4 px-8 py-3">
-          <DeleteButton productId={params.productId} />
-          <EditButton />
-        </div> */}
         <ProductDetail detail_1={detail_1} detail_2={detail_2} rate={rate.toString().substring(0,3)} images={images} />
+        <EditButton
+              productId={params.productId}
+              productName={productName}
+              productDetail={detail}
+          />
       </div>
       <div className="mt-16 px-8 flex justify-between w-full">
         <ProductDescription productId={params.productId} />

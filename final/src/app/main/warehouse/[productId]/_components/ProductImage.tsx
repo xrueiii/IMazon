@@ -31,6 +31,7 @@ function ProductImage({ images }: Props) {
         alt="Product photo"
         width={350}
         height={350}
+        className="max-h-[350px] max-w-[350px]"
       />
       <button onClick={() => changePhoto(1)}>
         <Image src="/next.png" alt="next arrow" width={30} height={30} />

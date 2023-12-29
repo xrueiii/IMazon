@@ -5,7 +5,6 @@ import StarRateIcon from '@mui/icons-material/StarRate';
 import AddToCartButton from "./AddToCartButton";
 import Image from "next/image";
 
-
 type Props = {
   detail_1: {
     displayId: string;
@@ -39,11 +38,6 @@ function ProductDetail({ detail_1, detail_2, rate, images }: Props) {
       newIndex = images.length - 1;
     }
     setCurrentIndex(newIndex);
-  };
-
-
-  const handleStyleSelection = (index: number) => {
-    setCurrentIndex(index);
   };
 
   return (
@@ -88,7 +82,7 @@ function ProductDetail({ detail_1, detail_2, rate, images }: Props) {
                 currentIndex === index
                   && "bg-slate-300"
               }`}
-              onClick={() => handleStyleSelection(index)}
+              onClick={() => setCurrentIndex(index)}
             >
               {detail.productStyle}
             </button>
