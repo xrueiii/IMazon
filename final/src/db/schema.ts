@@ -161,3 +161,48 @@ export const productToCommentRelations = relations(
     }),
   }),
 );
+
+export const cartsTable = pgTable(
+  "carts",
+  {
+    id: serial("id").primaryKey(),
+    displayId: uuid("display_id").defaultRandom().notNull().unique(),
+    productDetailId: uuid("product_detail_id")
+      .notNull()
+      .references(() => productDetailTable.displayId, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => usersTable.displayId, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    productId: uuid("product_id")
+      .notNull()
+      .references(() => productTable.displayId, { onDelete: "cascade" }),
+  },
+  (table) => ({
+    productDetailIdIndex: index("product_detail_id_index").on(
+      table.productDetailId,
+    ),
+    buyerDiaplayIndex: index("buyer_index").on(table.userId),
+    productIdIndex: index("product_id_index").on(table.productId),
+  }),
+);
+
+export const productToCartsRelations = relations(cartsTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [cartsTable.userId],
+    references: [usersTable.displayId],
+  }),
+  product: one(productTable, {
+    fields: [cartsTable.productId],
+    references: [productTable.displayId],
+  }),
+  productDetail: one(productDetailTable, {
+    fields: [cartsTable.productDetailId],
+    references: [productDetailTable.displayId],
+  }),
+}));
