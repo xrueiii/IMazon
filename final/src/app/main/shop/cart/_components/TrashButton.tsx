@@ -3,8 +3,8 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-import { deleteCart } from "@/app/main/warehouse/[productId]/_components/actions";
 import { publicEnv } from "@/lib/env/public";
+import useCart from "@/hooks/useCart";
 
 type Props = {
   cartId: string;
@@ -12,11 +12,11 @@ type Props = {
 
 function TrashButton({ cartId }: Props) {
   const router = useRouter();
+  const { deleteCart } = useCart();
   return (
     <form
       action={async () => {
-        const proId = cartId;
-        await deleteCart(proId);
+        await deleteCart(cartId);
         router.refresh();
         router.push(`${publicEnv.NEXT_PUBLIC_BASE_URL}/main/shop/cart`);
       }}

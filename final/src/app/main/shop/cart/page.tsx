@@ -60,8 +60,8 @@ async function CartPage() {
     <div className="flex h-full w-full flex-wrap justify-center rounded-b-xl border-2 px-10">
       {carts?.map((cart, index) => {
         return (
+          <div key={index} className="flex w-full">
           <Link
-            key={index}
             href={{
               pathname: `/main/warehouse/${cart.product.displayId}`,
             }}
@@ -91,11 +91,12 @@ async function CartPage() {
                 總計： ${" "}
                 {parseInt(cart.productDetail.productPrice) * cart.buyQuantity}
               </div>
-              <div className="relative flex h-36 w-1/6 items-center justify-center gap-2 p-2">
-                <TrashButton cartId={cart.displayId} />
-              </div>
             </div>
           </Link>
+           <div className="relative flex h-36 items-center justify-center gap-2 p-2">
+            <TrashButton cartId={cart.displayId}/>
+          </div>
+         </div>
         );
       })}
       <div className="h-40 w-full"></div>
