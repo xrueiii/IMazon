@@ -1,6 +1,6 @@
 "use client";
 
-import { type ChangeEvent, type DragEvent, useEffect, useState } from "react";
+import { useEffect, useState, type ChangeEvent, type DragEvent } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -19,21 +19,25 @@ export default function AddProductForm() {
 
   const [nameIsFilled, setNameIsFilled] = useState(true);
   const [allFilled, setAllFilled] = useState(false);
+  const [detailAllFilled, setDetailAllFilled] = useState(false);
   const [priceIsFilled, setPriceIsFilled] = useState(true);
   const [imageIsFilled, setImageIsFilled] = useState(true);
   const [quantityIsFilled, setQuantityIsFilled] = useState(true);
   const [styleIsFilled, setStyleIsFilled] = useState(true);
   const [desciptionIsFilled, setDescriptionIsFilled] = useState(true);
+  const InitProductName: Omit<Product, "id" | "sellerDisplayId"> = {
+    productName: "",
+    productDescription: "",
+  };
 
-  const [notFinish, setNotFinish] = useState(false);
+  // const [notFinish, setNotFinish] = useState(false);
   const [productNum, setProductNum] = useState<number>(1);
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  // const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [productDetail, setProductDetail] = useState<
     Omit<ProductDetail, "id" | "productId" | "sold">[]
   >([]);
-  const [productName, setProductName] = useState<
-    Omit<Product, "id" | "sellerDisplayId">[]
-  >([]);
+  const [productName, setProductName] =
+    useState<Omit<Product, "id" | "sellerDisplayId">>(InitProductName);
   const [lastProduct, setLastProduct] = useState(false);
   const [isNext, setIsNext] = useState(true);
   const router = useRouter();
@@ -69,7 +73,7 @@ export default function AddProductForm() {
     setStyleIsFilled(!!inputValue.trim()); // Will be true if not empty
   };
 
-  const handleNextStep = async () => {
+  const handleNextStep = () => {
     if (name === "") {
       setNameIsFilled(false);
     } else {
@@ -82,6 +86,11 @@ export default function AddProductForm() {
     }
     if (nameIsFilled && desciptionIsFilled) setAllFilled(true);
     if (allFilled === true) {
+      const newProductName: Omit<Product, "id" | "sellerDisplayId"> = {
+        productName: name,
+        productDescription: description,
+      };
+      setProductName(newProductName);
       setIsNext(false);
       setAllFilled(false);
     }
@@ -112,9 +121,9 @@ export default function AddProductForm() {
     if (productDetail[productNum - 1] === undefined) {
       setLastProduct(false);
     } else {
-      setLastProduct(true);
-      //
-      setNotFinish(true);
+      if (price === "" || style === "" || quantity === 0 || image === "")
+        setLastProduct(true);
+      // setNotFinish(true);
     }
     if (productNum === 1) {
       setIsNext(true);
@@ -128,8 +137,6 @@ export default function AddProductForm() {
       setProductNum(productNum - 1);
     }
   };
-
-  // useEffect(() => {}, [price, quantity, style, image]);
 
   const handleNextProduct = () => {
     if (price === "") {
@@ -163,18 +170,18 @@ export default function AddProductForm() {
           quantity,
           imageLink: image,
         };
-      const newProductName: Omit<Product, "id" | "sellerDisplayId"> = {
-        productName: name,
-        productDescription: description,
-      };
+      // const newProductName: Omit<Product, "id" | "sellerDisplayId"> = {
+      //   productName: name,
+      //   productDescription: description,
+      // };
       setProductDetail((prevProductDetails) => [
         ...prevProductDetails,
         newProductDetail,
       ]);
-      setProductName((prevProductNames) => [
-        ...prevProductNames,
-        newProductName,
-      ]);
+      // setProductName((prevProductNames) => [
+      //   ...prevProductNames,
+      //   newProductName,
+      // ]);
 
       //clear all the existing data
       setPrice("");
@@ -182,7 +189,7 @@ export default function AddProductForm() {
       setQuantity(0);
       setImage("");
       setPreviewSrc(null);
-      // setAllFilled(false);
+      setAllFilled(false);
     }
     if (productDetail[productNum - 1] !== undefined) {
       setProductNum(productNum + 1);
@@ -192,7 +199,7 @@ export default function AddProductForm() {
       setQuantity(0);
       setImage("");
       setPreviewSrc(null);
-      // setAllFilled(false);
+      setAllFilled(false);
     }
   };
 
@@ -437,7 +444,20 @@ export default function AddProductForm() {
                   </button>
                 )}
               </div>
-              {lastProduct === false && <FinishAdding />}
+              {lastProduct === false &&
+                price !== "" &&
+                style !== "" &&
+                quantity !== 0 &&
+                image !== "" && (
+                  <FinishAdding
+                    price={price}
+                    style={style}
+                    quantity={quantity}
+                    image={image}
+                    productFisrtStep={productName}
+                    productDetail={productDetail}
+                  />
+                )}
             </div>
           </div>
         </div>

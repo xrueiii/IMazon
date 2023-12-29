@@ -3,7 +3,6 @@ import Link from "next/link";
 
 import { getProductDetails } from "./action";
 
-
 type ProductPreviewProps = {
   productId: string;
   productName: string;

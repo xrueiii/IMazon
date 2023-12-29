@@ -1,28 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useRef } from "react";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { Search } from "lucide-react";
 
 export default function GetSerachName() {
-  const [searchInput, setSearchInput] = useState<string>("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  if (searchInput === "") {
-    const params = new URLSearchParams(searchParams);
-    params.set("searchName", searchInput!);
-    router.push(`${pathname}?${params.toString()}`);
-  }
+
   const handleSearch = () => {
-    if (searchInput === "") {
+    const searchString = searchInputRef.current?.value;
+    if (searchString === "") {
       alert("Please fill in the product name you want to search");
       return;
     }
     const params = new URLSearchParams(searchParams);
-    params.set("searchName", searchInput!);
+    params.set("searchName", searchString!);
     router.push(`${pathname}?${params.toString()}`);
   };
 
@@ -34,7 +31,7 @@ export default function GetSerachName() {
         placeholder="Search product"
         aria-label="Search"
         aria-describedby="button-addon1"
-        onChange={(e) => setSearchInput(e.target.value)}
+        ref={searchInputRef}
       />
       <button
         className="hover:shadow-xs relative z-[2] flex items-center rounded-r bg-gray-300 px-6 py-2.5 text-xs font-medium shadow-md focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg"
