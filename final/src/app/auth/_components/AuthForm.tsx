@@ -23,7 +23,7 @@ function AuthForm() {
       email,
       name,
       password,
-      callbackUrl: `${publicEnv.NEXT_PUBLIC_BASE_URL}/warehouse`,
+      callbackUrl: `${publicEnv.NEXT_PUBLIC_BASE_URL}/main/shop`,
     });
   };
   return (
@@ -104,7 +104,7 @@ function AuthForm() {
         <button
           onClick={async () => {
             signIn("google", {
-              callbackUrl: `${publicEnv.NEXT_PUBLIC_BASE_URL}/warehouse`,
+              callbackUrl: `${publicEnv.NEXT_PUBLIC_BASE_URL}/main/warehouse`,
             });
           }}
           className="flex w-full justify-center hover:bg-slate-100 py-2 rounded-md"

@@ -8,6 +8,6 @@ export default async function Home() {
   if (!session?.user?.id) {
     redirect(`${publicEnv.NEXT_PUBLIC_BASE_URL}/auth`);
   } else {
-    redirect(`${publicEnv.NEXT_PUBLIC_BASE_URL}/warehouse`);
+    redirect(`${publicEnv.NEXT_PUBLIC_BASE_URL}/main/shop`);
   }
 }

@@ -15,7 +15,8 @@ function DeleteButton({ productId }: Props) {
       action={async () => {
         const proId = productId;
         await deleteProduct(proId);
-        router.push(`${publicEnv.NEXT_PUBLIC_BASE_URL}/warehouse`);
+        router.refresh();
+        router.push(`${publicEnv.NEXT_PUBLIC_BASE_URL}/main/warehouse`);
       }}
     >
       <button

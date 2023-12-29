@@ -28,12 +28,12 @@ export default async function ProductPreview({
   return (
     <Link
       href={{
-        pathname: `/warehouse/product/${productId}`,
+        pathname: `/main/warehouse/${productId}`,
       }}
     >
       <div className="flex-col items-center gap-2 rounded-md border-2 p-6">
         <Image
-          src="/productTest.jpeg"
+          src={`${productDetails[0].imageLink}`}
           alt="product_pic"
           width={250}
           height={50}

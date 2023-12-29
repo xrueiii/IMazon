@@ -3,6 +3,7 @@
 import { Tab, Tabs } from "@mui/material";
 import { useState } from "react";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useRouter } from "next/navigation";
 
 const theme = createTheme({
   palette: {
@@ -18,16 +19,14 @@ const theme = createTheme({
 
 export default function PageTab() {
     const [page, setPage] = useState(1);
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setPage(newValue);
-      };
+    const router = useRouter();
+    
     return(
         <div className="w-full border-l-2 border-r-2">
             <ThemeProvider theme={theme}>
-                <Tabs value={page} onChange={handleChange} indicatorColor="primary">
-                    <Tab label="Product Page" value={1}/>
-                    <Tab label="Setting Page" value={2}/>
-                    <Tab label="What? Page" value={3}/>
+                <Tabs value={page} indicatorColor="primary">
+                    <Tab label="Buyer Mode" value={1} onClick={() => {router.push(`/main/shop`); setPage(1);}}/>
+                    <Tab label="Seller Mode" value={2} onClick={() => {router.push(`/main/warehouse`); setPage(2);}}/>
                 </Tabs>
             </ThemeProvider>
         </div>

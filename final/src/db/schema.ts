@@ -1,9 +1,11 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   index,
   integer,
   pgTable,
   serial,
+  timestamp,
+  unique,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -70,10 +72,11 @@ export const productDetailTable = pgTable(
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
-    productStyle: varchar("product_style", { length: 20 }).notNull().unique(),
+    productStyle: varchar("product_style", { length: 20 }).notNull(),
   },
   (table) => ({
     productNameIndex: index("display_id_index").on(table.displayId),
+    uniqCombination: unique().on(table.productId, table.productStyle),
   }),
 );
 
@@ -116,6 +119,44 @@ export const productToProductDetailRelations = relations(
     productDetail: one(productDetailTable, {
       fields: [productToProductDetailTable.productDetailId],
       references: [productDetailTable.displayId],
+    }),
+  }),
+);
+
+export const commentsTable = pgTable(
+  "comments",
+  {
+    id: serial("id").primaryKey(),
+    displayId: uuid("display_id").defaultRandom().notNull().unique(),
+    content: varchar("content", { length: 280 }).notNull(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => usersTable.displayId, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    createdAt: timestamp("created_at").default(sql`now()`),
+    productId: uuid("product_id")
+      .notNull()
+      .references(() => productTable.displayId, { onDelete: "cascade" }),
+  },
+  (table) => ({
+    productIdIndex: index("product_id_index").on(table.productId),
+    userIdIndex: index("user_id_index").on(table.userId),
+    createdAtIndex: index("created_at_index").on(table.createdAt),
+  }),
+);
+
+export const productToCommentRelations = relations(
+  commentsTable,
+  ({ one }) => ({
+    user: one(usersTable, {
+      fields: [commentsTable.userId],
+      references: [usersTable.displayId],
+    }),
+    product: one(productTable, {
+      fields: [commentsTable.productId],
+      references: [productTable.displayId],
     }),
   }),
 );

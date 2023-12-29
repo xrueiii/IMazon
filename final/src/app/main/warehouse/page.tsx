@@ -9,7 +9,6 @@ import { publicEnv } from "@/lib/env/public";
 
 import AddProductButton from "./_components/AddProductButton";
 import GetSerachName from "./_components/GetSearchName";
-import LeftDrawerButton from "./_components/LeftDrawerButton";
 import ProductPreview from "./_components/ProductPreview";
 
 type Pageprops = {
@@ -39,14 +38,11 @@ export default async function WarehousePage({
 
   return (
     <main className="flex min-h-screen items-start rounded-b-xl border-2">
-      <LeftDrawerButton />
       <div className="w-full flex-col justify-between">
-        <div className="flex items-end justify-between px-10">
-          <p className="mt-5 text-2xl font-semibold">Products</p>
-          <div className="flex items-center justify-center gap-10">
-            <div>
-              <GetSerachName />
-            </div>
+        <div className="flex justify-between px-10 mt-5 ">
+          <p className="text-2xl font-semibold">My Products</p>
+          <div className="flex items-center justify-center gap-10 text-2xl">
+            <GetSerachName />
             <AddProductButton />
           </div>
         </div>
