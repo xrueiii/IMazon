@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
-import DeleteButton from "./_components/DeleteButton";
-import EditButton from "./_components/EditButton";
+// import DeleteButton from "./_components/DeleteButton";
+// import EditButton from "./_components/EditButton";
 import ProductDescription from "./_components/ProductDescription";
 import ProductDetail from "./_components/ProductDetail";
 import ReviewInput from "./_components/ReviewInput";
