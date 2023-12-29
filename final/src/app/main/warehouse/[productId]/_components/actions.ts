@@ -75,3 +75,8 @@ export async function addProductToCart( userId: string, productId: string, produ
 
   return;
 }
+
+export const deleteCart = async (cartId: string) => {
+  await db.delete(cartsTable).where(eq(cartsTable.displayId, cartId));
+  return;
+};
