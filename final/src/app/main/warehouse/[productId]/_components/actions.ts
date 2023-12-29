@@ -3,7 +3,7 @@
 import { eq } from "drizzle-orm";
 
 import { db } from "@/db";
-import { commentsTable, productDetailTable, productTable } from "@/db/schema";
+import { cartsTable, commentsTable, productDetailTable, productTable } from "@/db/schema";
 
 export async function getProductPhotos(productId: string) {
   console.log(productId);
@@ -26,6 +26,7 @@ export async function getProductDetail_1(productId: string) {
   const [productDetail] = await db.query.productTable.findMany({
     where: eq(productTable.displayId, productId),
     columns: {
+      displayId: true,
       productName: true,
       productDescription: true,
       sellerdisplayId: true,
@@ -44,6 +45,7 @@ export async function getProductDetail_2(productId: string) {
       productSold: true,
       productPrice: true,
       productStyle: true,
+      displayId: true,
     },
   });
 
@@ -57,6 +59,18 @@ export async function postComment(productId: string, userId: string, content: st
     productId: productId,
     content: content,
     rate: rate,
+  }).execute();
+
+  return;
+}
+
+export async function addProductToCart( userId: string, productId: string, productDetailId: string, buyQuantity: number) {
+  console.log(productId);
+  await db.insert(cartsTable).values({
+    userId: userId,
+    productId: productId,
+    productDetailId: productDetailId,
+    buyQuantity: buyQuantity,
   }).execute();
 
   return;
