@@ -17,6 +17,7 @@ export default async function ProductPreview({
   let minPrice = Infinity;
   let totalQuantity = 0;
   let totalSold = 0;
+
   for (let i = 0; i < productDetails.length; i++) {
     if (parseInt(productDetails[i].price) < minPrice) {
       minPrice = parseInt(productDetails[i].price);
@@ -38,7 +39,7 @@ export default async function ProductPreview({
           height={50}
         ></Image>
         <div className="mt-2 flex justify-between">
-          <p>{productName}</p>
+          {productName.length < 11 ?  (<p>{productName}</p>): (<p>{productName.substring(0,10)}...</p>)}
           <p className="text-lg font-semibold">{"NTD " + minPrice}</p>
         </div>
 

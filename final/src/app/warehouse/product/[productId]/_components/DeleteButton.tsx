@@ -1,10 +1,8 @@
 "use client";
 
-import { redirect, useRouter } from "next/navigation";
-
-import { publicEnv } from "@/lib/env/public";
-
+import { useRouter } from "next/navigation";
 import { deleteProduct } from "./actions";
+import { publicEnv } from "@/lib/env/public";
 
 type Props = {
   productId: string;
@@ -17,9 +15,7 @@ function DeleteButton({ productId }: Props) {
       action={async () => {
         const proId = productId;
         await deleteProduct(proId);
-        //revalidatePath("layout");
-        router.refresh();
-        redirect(`${publicEnv.NEXT_PUBLIC_BASE_URL}/warehouse`);
+        router.push(`${publicEnv.NEXT_PUBLIC_BASE_URL}/warehouse`);
       }}
     >
       <button

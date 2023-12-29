@@ -1,9 +1,11 @@
 "use client";
 
 import type { Product, ProductDetail } from "@/lib/types";
+import { useRouter } from "next/navigation";
 
 export default function useProducts() {
   // const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const addProduct = async (
     userId: string,
     productName: Product["productName"],
@@ -24,6 +26,7 @@ export default function useProducts() {
       });
 
       const data = await res.json();
+      router.refresh();
       // setLoading(false);
       return data.newProductId;
     } catch (error) {
@@ -54,7 +57,7 @@ export default function useProducts() {
       });
 
       const data = await res.json();
-
+      router.refresh();
       // setLoading(false);
       return data;
     } catch (error) {

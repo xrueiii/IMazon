@@ -70,7 +70,7 @@ export const productDetailTable = pgTable(
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
-    productStyle: varchar("product_color", { length: 20 }).notNull(),
+    productStyle: varchar("product_style", { length: 20 }).notNull().unique(),
   },
   (table) => ({
     productNameIndex: index("display_id_index").on(table.displayId),

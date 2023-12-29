@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { productDetailTable, productTable } from "@/db/schema";
 
+
 export async function getProductPhotos(productId: string) {
   console.log(productId);
   const productPhotos = await db.query.productDetailTable.findMany({
