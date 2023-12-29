@@ -97,7 +97,7 @@ export default function AddProductForm() {
   };
 
   const handleCancel = () => {
-    router.push("/warehouse");
+    router.push("/main/warehouse");
   };
 
   useEffect(() => {

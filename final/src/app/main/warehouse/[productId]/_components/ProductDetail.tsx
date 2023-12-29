@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import StarRateIcon from '@mui/icons-material/StarRate';
 
 
 type Props = {
@@ -16,9 +17,11 @@ type Props = {
     productPrice: string;
     productStyle: string;
   }[];
+
+  rate: string;
 };
 
-function ProductDetail({ detail_1, detail_2 }: Props) {
+function ProductDetail({ detail_1, detail_2, rate }: Props) {
 
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isHovered, setIsHovered] = useState<boolean>(false);
@@ -29,8 +32,13 @@ function ProductDetail({ detail_1, detail_2 }: Props) {
 
   return (
     <>
-      <div className="flex h-14 w-full items-center justify-start text-3xl font-medium">
+      <div className="flex h-14 w-full items-center justify-start text-3xl font-medium gap-2">
         {detail_1.productName}
+        <div className="flex text-lg gap-1 items-center">
+          <StarRateIcon className="text-yellow-500 text-lg"/>
+          <p>({rate})</p>
+        </div>
+        
       </div>
       <div className="flex h-14 w-full items-center justify-start text-4xl font-semibold  text-teal-900">
         NT$ {detail_2[currentIndex].productPrice}

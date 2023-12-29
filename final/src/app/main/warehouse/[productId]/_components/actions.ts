@@ -50,12 +50,13 @@ export async function getProductDetail_2(productId: string) {
   return productDetail;
 }
 
-export async function postComment(productId: string, userId: string, content: string) {
+export async function postComment(productId: string, userId: string, content: string, rate: number) {
   console.log(productId);
   await db.insert(commentsTable).values({
     userId: userId,
     productId: productId,
     content: content,
+    rate: rate,
   }).execute();
 
   return;

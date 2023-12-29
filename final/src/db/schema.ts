@@ -45,7 +45,7 @@ export const productTable = pgTable(
       .references(() => usersTable.displayId, {
         onDelete: "cascade",
         onUpdate: "cascade",
-      }),
+      }), 
   },
   (table) => ({
     productNameIndex: index("display_id_index").on(table.displayId),
@@ -139,6 +139,7 @@ export const commentsTable = pgTable(
     productId: uuid("product_id")
       .notNull()
       .references(() => productTable.displayId, { onDelete: "cascade" }),
+    rate: integer("comment_rate").notNull(),
   },
   (table) => ({
     productIdIndex: index("product_id_index").on(table.productId),
