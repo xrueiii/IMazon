@@ -9,6 +9,7 @@ import { auth } from "@/lib/auth";
 import { publicEnv } from "@/lib/env/public";
 
 import GoShoppingButton from "./_components/GoShoppingButton";
+import Link from "next/link";
 
 async function CartPage() {
   const session = await auth();
@@ -22,6 +23,7 @@ async function CartPage() {
     with: {
       product: {
         columns: {
+          displayId: true,
           productName: true,
         },
       },
@@ -56,8 +58,11 @@ async function CartPage() {
     <div className="flex h-full w-full flex-wrap justify-center rounded-b-xl border-2 px-10">
       {carts?.map((cart, index) => {
         return (
-          <div
+          <Link
             key={index}
+            href={{
+              pathname: `/main/warehouse/${cart.product.displayId}`,
+            }}
             className="flex h-40 w-full items-center justify-center"
           >
             <div className="flex h-36 w-full items-center justify-center border-b-2 border-slate-300">
@@ -93,7 +98,7 @@ async function CartPage() {
                 />
               </div>
             </div>
-          </div>
+          </Link>
         );
       })}
       <div className="h-40 w-full"></div>

@@ -18,7 +18,6 @@ export default function AddProductForm() {
   const [image, setImage] = useState<string>("");
 
   const [nameIsFilled, setNameIsFilled] = useState(true);
-  const [allFilled, setAllFilled] = useState(false);
   //const [detailAllFilled, setDetailAllFilled] = useState(false);
   const [priceIsFilled, setPriceIsFilled] = useState(true);
   const [imageIsFilled, setImageIsFilled] = useState(true);
@@ -84,15 +83,14 @@ export default function AddProductForm() {
     } else {
       setDescriptionIsFilled(true);
     }
-    if (nameIsFilled && desciptionIsFilled) setAllFilled(true);
-    if (allFilled === true) {
+
+    if (nameIsFilled && desciptionIsFilled) {
       const newProductName: Omit<Product, "id" | "sellerDisplayId"> = {
         productName: name,
         productDescription: description,
       };
       setProductName(newProductName);
       setIsNext(false);
-      setAllFilled(false);
     }
   };
 
@@ -159,9 +157,8 @@ export default function AddProductForm() {
     } else {
       setImageIsFilled(true);
     }
-    if (priceIsFilled && quantityIsFilled && styleIsFilled && imageIsFilled)
-      setAllFilled(true);
-    if (allFilled === true && productDetail[productNum - 1] === undefined) {
+
+    if (priceIsFilled && quantityIsFilled && styleIsFilled && imageIsFilled && productDetail[productNum - 1] === undefined) {
       setProductNum(productNum + 1);
       const newProductDetail: Omit<ProductDetail, "id" | "productId" | "sold"> =
         {
@@ -189,7 +186,6 @@ export default function AddProductForm() {
       setQuantity(0);
       setImage("");
       setPreviewSrc(null);
-      setAllFilled(false);
     }
     if (productDetail[productNum - 1] !== undefined) {
       setProductNum(productNum + 1);
@@ -199,7 +195,6 @@ export default function AddProductForm() {
       setQuantity(0);
       setImage("");
       setPreviewSrc(null);
-      setAllFilled(false);
     }
   };
 
