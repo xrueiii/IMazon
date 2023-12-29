@@ -70,7 +70,7 @@ async function ProductPage({ params }: Props) {
           { comments.length === 0 && <p className="w-full text-gray-500 text-center mt-10">There's still no comment for this product.</p>}
           <div className="mt-5 w-full flex-col gap-2">
             {comments.map((comment, index) => 
-              <div key={index} className="w-full border py-16 px-5">
+              <div key={index} className="w-full border py-16 px-10">
                 <div className="flex justify-between">
                   <div className="flex gap-2">
                     <p>{comment.user.name}:</p>
