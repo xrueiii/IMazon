@@ -3,7 +3,7 @@
 import { eq } from "drizzle-orm";
 
 import { db } from "@/db";
-import { productDetailTable, productTable } from "@/db/schema";
+import { commentsTable, productDetailTable, productTable } from "@/db/schema";
 
 export async function getProductPhotos(productId: string) {
   console.log(productId);
@@ -48,4 +48,15 @@ export async function getProductDetail_2(productId: string) {
   });
 
   return productDetail;
+}
+
+export async function postComment(productId: string, userId: string, content: string) {
+  console.log(productId);
+  await db.insert(commentsTable).values({
+    userId: userId,
+    productId: productId,
+    content: content,
+  }).execute();
+
+  return;
 }

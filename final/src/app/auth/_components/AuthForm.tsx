@@ -104,7 +104,7 @@ function AuthForm() {
         <button
           onClick={async () => {
             signIn("google", {
-              callbackUrl: `${publicEnv.NEXT_PUBLIC_BASE_URL}/main/warehouse`,
+              callbackUrl: `${publicEnv.NEXT_PUBLIC_BASE_URL}/main/shop`,
             });
           }}
           className="flex w-full justify-center hover:bg-slate-100 py-2 rounded-md"

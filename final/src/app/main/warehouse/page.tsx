@@ -46,7 +46,7 @@ export default async function WarehousePage({
             <AddProductButton />
           </div>
         </div>
-        <div className="grid w-full grid-cols-4 gap-10 overflow-scroll px-10 py-5">
+        <div className="grid w-full grid-cols-4 gap-10 overflow-scroll px-10 py-5 mt-5">
           {
             products.map((product) => (
               <ProductPreview
