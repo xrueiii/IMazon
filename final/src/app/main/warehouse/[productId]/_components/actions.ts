@@ -3,7 +3,12 @@
 import { eq } from "drizzle-orm";
 
 import { db } from "@/db";
-import { commentsTable, productDetailTable, productTable } from "@/db/schema";
+import {
+  cartsTable,
+  commentsTable,
+  productDetailTable,
+  productTable,
+} from "@/db/schema";
 
 export async function getProductPhotos(productId: string) {
   console.log(productId);
@@ -50,13 +55,25 @@ export async function getProductDetail_2(productId: string) {
   return productDetail;
 }
 
-export async function postComment(productId: string, userId: string, content: string) {
+export async function postComment(
+  productId: string,
+  userId: string,
+  content: string,
+) {
   console.log(productId);
-  await db.insert(commentsTable).values({
-    userId: userId,
-    productId: productId,
-    content: content,
-  }).execute();
+  await db
+    .insert(commentsTable)
+    .values({
+      userId: userId,
+      productId: productId,
+      content: content,
+    })
+    .execute();
 
   return;
 }
+
+export const deleteCart = async (cartId: string) => {
+  await db.delete(cartsTable).where(eq(cartsTable.displayId, cartId));
+  return;
+};

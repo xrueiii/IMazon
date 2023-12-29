@@ -9,6 +9,7 @@ import { auth } from "@/lib/auth";
 import { publicEnv } from "@/lib/env/public";
 
 import GoShoppingButton from "./_components/GoShoppingButton";
+import TrashButton from "./_components/TrashButton";
 
 async function CartPage() {
   const session = await auth();
@@ -34,6 +35,7 @@ async function CartPage() {
       },
     },
     columns: {
+      displayId: true,
       buyQuantity: true,
       userId: true,
     },
@@ -85,12 +87,7 @@ async function CartPage() {
                 {parseInt(cart.productDetail.productPrice) * cart.buyQuantity}
               </div>
               <div className="relative flex h-36 w-1/6 items-center justify-center gap-2 p-2">
-                <Image
-                  src="/delete.png"
-                  alt="delete photo"
-                  width={20}
-                  height={20}
-                />
+                <TrashButton cartId={cart.displayId} />
               </div>
             </div>
           </div>
