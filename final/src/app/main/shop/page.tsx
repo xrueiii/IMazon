@@ -1,14 +1,16 @@
 import { redirect } from "next/navigation";
 
-import { auth } from "@/lib/auth";
-import { publicEnv } from "@/lib/env/public";
-import { db } from "@/db";
-import { productTable } from "@/db/schema";
-import { like } from "drizzle-orm";
 import GetSerachName from "../warehouse/_components/GetSearchName";
 import ProductPreview from "../warehouse/_components/ProductPreview";
-import LeftDrawerButton from "./_components/LeftDrawerButton";
+import { like } from "drizzle-orm";
+
+import { db } from "@/db";
+import { productTable } from "@/db/schema";
+import { auth } from "@/lib/auth";
+import { publicEnv } from "@/lib/env/public";
+
 import CartButton from "./_components/CartButton";
+import LeftDrawerButton from "./_components/LeftDrawerButton";
 
 type Pageprops = {
   searchParams: {
@@ -19,43 +21,42 @@ type Pageprops = {
 export default async function WarehousePage({
   searchParams: { searchName },
 }: Pageprops) {
-    const session = await auth();
-    const userId = session?.user?.id;
-    if (!userId) {
-      redirect(`${publicEnv.NEXT_PUBLIC_BASE_URL}`);
-    }
-    console.log(searchName);
-    const products = await db
-      .select({
-        id: productTable.displayId,
-        productName: productTable.productName,
-      })
-      .from(productTable)
-      .where(like(productTable.productName, `${searchName ?? ""}%`))
-      .execute();
-  
-    return (
-        <main className="flex min-h-screen items-start rounded-b-xl border-2">
-            <LeftDrawerButton/>
-            <div className="w-full flex-col justify-between">
-                <div className="flex justify-between px-10 mt-5 ">
-                    <p className="text-2xl font-semibold">Products</p>
-                    <div className="flex items-center justify-center gap-10 text-2xl">
-                        <GetSerachName/>
-                        <CartButton/>
-                    </div>
-                </div>
-                <div className="grid w-full grid-cols-4 gap-10 overflow-scroll px-10 py-5 mt-5">
-                {
-                    products.map((product) => (
-                    <ProductPreview
-                        productId={product.id}
-                        productName={product.productName}
-                        key={product.id}
-                    />
-                    ))}
-                </div>
-            </div>
-        </main>
-    );
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) {
+    redirect(`${publicEnv.NEXT_PUBLIC_BASE_URL}`);
+  }
+  console.log(searchName);
+  const products = await db
+    .select({
+      id: productTable.displayId,
+      productName: productTable.productName,
+    })
+    .from(productTable)
+    .where(like(productTable.productName, `${searchName ?? ""}%`))
+    .execute();
+
+  return (
+    <main className="flex min-h-screen items-start rounded-b-xl border-2">
+      <LeftDrawerButton />
+      <div className="w-full flex-col justify-between">
+        <div className="mt-5 flex justify-between px-10 ">
+          <p className="text-2xl font-semibold">Products</p>
+          <div className="flex items-center justify-center gap-10 text-2xl">
+            <GetSerachName />
+            <CartButton />
+          </div>
+        </div>
+        <div className="mt-5 grid w-full grid-cols-4 gap-10 overflow-scroll px-10 py-5">
+          {products.map((product) => (
+            <ProductPreview
+              productId={product.id}
+              productName={product.productName}
+              key={product.id}
+            />
+          ))}
+        </div>
+      </div>
+    </main>
+  );
 }
