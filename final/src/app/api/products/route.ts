@@ -1,8 +1,7 @@
 import { z } from "zod";
 import { db } from "@/db";
 import { productTable } from "@/db/schema";
-import type { Product } from "@/lib/types";
-import { revalidatePath } from "next/cache";
+//import type { Product } from "@/lib/types";
 import { type NextRequest, NextResponse } from "next/server";
 
 const addProductSchema = z.object({
@@ -32,18 +31,12 @@ export async function POST(request: NextRequest) {
         sellerdisplayId: userId,
     })
     .onConflictDoNothing()
-    .returning();
+    .returning()
+    .execute();
 
-    revalidatePath("layout");
+    
 
-    const newProduct: Product = {
-        id: temp.displayId,
-        productName: temp.productName,
-        productDescription: temp.productDescription,
-        sellerDisplayId: temp.sellerdisplayId,
-    }
-
-    return newProduct;
+    return temp.displayId;
   } catch(error) {
     return NextResponse.json(
         { error: "Something went wrong" },

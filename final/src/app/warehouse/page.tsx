@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { eq } from "drizzle-orm";
+import { eq, and, like } from "drizzle-orm";
 
 import { db } from "@/db";
 import { productTable } from "@/db/schema";
@@ -34,17 +34,7 @@ export default async function WarehousePage({
       sellerDisplayId: productTable.sellerdisplayId,
     })
     .from(productTable)
-    .where(eq(productTable.sellerdisplayId, userId))
-    .execute();
-
-  const searchProduct = await db
-    .select({
-      id: productTable.displayId,
-      productName: productTable.productName,
-      sellerDisplayId: productTable.sellerdisplayId,
-    })
-    .from(productTable)
-    .where(eq(productTable.productName, searchName))
+    .where(and(eq(productTable.sellerdisplayId, userId),like(productTable.productName, `${searchName ?? ""}%`)))
     .execute();
 
   return (
@@ -61,17 +51,8 @@ export default async function WarehousePage({
           </div>
         </div>
         <div className="grid w-full grid-cols-4 gap-10 overflow-scroll px-10 py-5">
-          {(searchName === undefined || searchName === "") &&
+          {
             products.map((product) => (
-              <ProductPreview
-                productId={product.id}
-                productName={product.productName}
-                key={product.id}
-              />
-            ))}
-          {searchName !== undefined &&
-            searchName !== "" &&
-            searchProduct.map((product) => (
               <ProductPreview
                 productId={product.id}
                 productName={product.productName}

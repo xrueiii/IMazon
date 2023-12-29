@@ -1,7 +1,6 @@
 "use client";
 
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 import { publicEnv } from "@/lib/env/public";
 
@@ -12,13 +11,15 @@ type Props = {
 };
 
 function DeleteButton({ productId }: Props) {
+  const router = useRouter();
   return (
     <form
       action={async () => {
         const proId = productId;
         await deleteProduct(proId);
-        revalidatePath("/product");
-        redirect(`${publicEnv.NEXT_PUBLIC_BASE_URL}/product`);
+        //revalidatePath("layout");
+        router.refresh();
+        redirect(`${publicEnv.NEXT_PUBLIC_BASE_URL}/warehouse`);
       }}
     >
       <button
