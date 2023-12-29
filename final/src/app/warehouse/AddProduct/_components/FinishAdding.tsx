@@ -36,7 +36,7 @@ export default function FinishAdding({
   const [productDetailTemp, setProductDetailTemp] =
     useState<Omit<ProductDetail, "id" | "productId" | "sold">[]>(productDetail);
 
-  console.log("image link: " + image);
+  // console.log("image link: " + image);
   // console.log(image);
   // console.log(productFisrtStep.productName);
   // productDetail.map((product) => {
@@ -54,25 +54,31 @@ export default function FinishAdding({
   const handleFinish = async (e: FormEvent) => {
     e.preventDefault(); // Prevent the default form submission behavior
     if (productDetailTemp[productDetailTemp.length] === undefined) {
-      const tempProductDetail: Omit<
-        ProductDetail,
-        "id" | "productId" | "sold"
-      > = {
-        price,
-        style,
-        quantity,
-        imageLink: prodcuctImageLink,
-      };
+      // const tempProductDetail: Omit<
+      //   ProductDetail,
+      //   "id" | "productId" | "sold"
+      // > = {
+      //   price,
+      //   style,
+      //   quantity,
+      //   imageLink: image,
+      // };
 
-      setProductDetailTemp((prevProductDetails) => [
-        ...prevProductDetails,
-        tempProductDetail,
-      ]);
+      // setProductDetailTemp((prevProductDetails) => [
+      //   ...prevProductDetails,
+      //   tempProductDetail,
+      // ]);
+      let temp: Omit<ProductDetail, "id" | "productId" | "sold">[] =
+        productDetail;
+      temp.push({ price, style, quantity, imageLink: image });
+      setProductDetailTemp(temp);
+      console.log(temp);
+      console.log(productDetailTemp);
       // console.log("image link");
       // console.log(image);
     }
 
-    console.log(productFisrtStep);
+    // console.log(productFisrtStep);
     try {
       console.log("start trying");
       const newProductId = await addProduct(
@@ -81,16 +87,19 @@ export default function FinishAdding({
         productFisrtStep.productDescription,
       );
       // console.log(newProductId);
-      productDetailTemp.map(async (product) => {
+      for (let i = 0; i < productDetailTemp.length; i++) {
         await addProductDetail(
           newProductId,
-          product.quantity,
-          product.price,
-          product.style,
-          prodcuctImageLink,
+          productDetailTemp[i].quantity,
+          productDetailTemp[i].price,
+          productDetailTemp[i].style,
+          productDetailTemp[i].imageLink,
         );
-      });
+      }
+      // productDetailTemp.map(async (product) => {
 
+      // });
+      router.refresh();
       router.push(`/warehouse/product/${newProductId}`);
       // Additional logic or redirection can be added here
     } catch (error) {
