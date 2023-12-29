@@ -1,8 +1,8 @@
 "use client";
 
-import type { ChangeEvent, DragEvent } from "react";
-import { useEffect, useState } from "react";
+import { type ChangeEvent, type DragEvent, useEffect, useState } from "react";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import type { Product, ProductDetail } from "@/lib/types";
@@ -16,6 +16,7 @@ export default function AddProductForm() {
   const [description, setDescription] = useState<string>("");
   const [style, setStyle] = useState<string>("");
   const [image, setImage] = useState<string>("");
+
   const [nameIsFilled, setNameIsFilled] = useState(true);
   const [allFilled, setAllFilled] = useState(false);
   const [priceIsFilled, setPriceIsFilled] = useState(true);
@@ -23,7 +24,10 @@ export default function AddProductForm() {
   const [quantityIsFilled, setQuantityIsFilled] = useState(true);
   const [styleIsFilled, setStyleIsFilled] = useState(true);
   const [desciptionIsFilled, setDescriptionIsFilled] = useState(true);
+
+  const [notFinish, setNotFinish] = useState(false);
   const [productNum, setProductNum] = useState<number>(1);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [productDetail, setProductDetail] = useState<
     Omit<ProductDetail, "id" | "productId" | "sold">[]
   >([]);
@@ -109,6 +113,8 @@ export default function AddProductForm() {
       setLastProduct(false);
     } else {
       setLastProduct(true);
+      //
+      setNotFinish(true);
     }
     if (productNum === 1) {
       setIsNext(true);
@@ -123,7 +129,9 @@ export default function AddProductForm() {
     }
   };
 
-  useEffect(() => {
+  // useEffect(() => {}, [price, quantity, style, image]);
+
+  const handleNextProduct = () => {
     if (price === "") {
       setPriceIsFilled(false);
     } else {
@@ -146,9 +154,6 @@ export default function AddProductForm() {
     }
     if (priceIsFilled && quantityIsFilled && styleIsFilled && imageIsFilled)
       setAllFilled(true);
-  }, [price, quantity, style, image]);
-
-  const handleNextProduct = () => {
     if (allFilled === true && productDetail[productNum - 1] === undefined) {
       setProductNum(productNum + 1);
       const newProductDetail: Omit<ProductDetail, "id" | "productId" | "sold"> =
@@ -431,8 +436,8 @@ export default function AddProductForm() {
                     Next style
                   </button>
                 )}
-                <FinishAdding />
               </div>
+              {lastProduct === false && <FinishAdding />}
             </div>
           </div>
         </div>

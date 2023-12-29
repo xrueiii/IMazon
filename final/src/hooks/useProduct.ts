@@ -1,78 +1,70 @@
-import { auth } from "@/lib/auth";
-import { publicEnv } from "@/lib/env/public";
+"use client";
+
 import type { Product, ProductDetail } from "@/lib/types";
-import { redirect } from "next/navigation";
-import { useState } from "react";
-
-
 
 export default function useProducts() {
-    const [loading, setLoading] = useState(false);
-    const addProduct = async(productName: Product["productName"],
-        productDescription: Product["productDescription"],
-        ) => {
-      
-      const session = await auth();
-      const userId = session?.user?.id;
-      if (!userId) {
-        redirect(`${publicEnv.NEXT_PUBLIC_BASE_URL}`);
-      }
-      setLoading(true);
-      try {
-        const res = await fetch("/api/product/Post", {
-          method: "POST",
-          body: JSON.stringify({userId ,productName, productDescription}),
-            headers: {
-              "Content-Type": "application/json",
-            },
-        });
-    
-        const data = await res.json();
+  // const [loading, setLoading] = useState(false);
+  const addProduct = async (
+    userId: string,
+    productName: Product["productName"],
+    productDescription: Product["productDescription"],
+  ) => {
+    //setLoading(true);
+    try {
+      const res = await fetch("/api/products", {
+        method: "POST",
+        body: JSON.stringify({
+          userId: userId,
+          productName: productName,
+          productDescription: productDescription,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-        setLoading(false);
-        return data;
-      }catch(error){
-        console.log(error);
-      }
-    };
-    
-    
-    const addProductDetail = async(
-      productId: ProductDetail["id"],
-      productQuantity: ProductDetail["quantity"],
-      productPrice: ProductDetail["price"],
-      productStyle: ProductDetail["style"],
-      productImageLink: ProductDetail["imageLink"],
-      ) => {
-        
-      const session = await auth();
-      const userId = session?.user?.id;
-      if (!userId) {
-        redirect(`${publicEnv.NEXT_PUBLIC_BASE_URL}`);
-      }
-    
-      try {
-        const res = await fetch("/api/detail/Post", {
-          method: "POST",
-          body: JSON.stringify({productId ,productQuantity, productPrice, productStyle, productImageLink}),
-            headers: {
-              "Content-Type": "application/json",
-            },
-        });
-    
-        const data = await res.json();
-
-        setLoading(false);
-        return data;
-      }catch(error){
-        console.log(error);
-      }
-    
+      const data = await res.json();
+      // setLoading(false);
+      return data.newProductId;
+    } catch (error) {
+      console.log(error);
     }
+  };
 
-    return ({
-        loading,
-        addProduct,
-        addProductDetail,
-    })
+  const addProductDetail = async (
+    productId: ProductDetail["id"],
+    productQuantity: ProductDetail["quantity"],
+    productPrice: ProductDetail["price"],
+    productStyle: ProductDetail["style"],
+    productImageLink: ProductDetail["imageLink"],
+  ) => {
+    try {
+      const res = await fetch("/api/detail", {
+        method: "POST",
+        body: JSON.stringify({
+          productId: productId,
+          productQuantity: productQuantity,
+          productPrice: productPrice,
+          productStyle: productStyle,
+          productImageLink: productImageLink,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await res.json();
+
+      // setLoading(false);
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return {
+    // loading,
+    addProduct,
+    addProductDetail,
+  };
 }
