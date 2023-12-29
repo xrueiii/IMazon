@@ -25,7 +25,6 @@ export default function FinishAdding({
   productFisrtStep,
   productDetail,
 }: FinishProps) {
-
   const [productDetailTemp, setProductDetailTemp] =
     useState<Omit<ProductDetail, "id" | "productId" | "sold">[]>(productDetail);
 
@@ -70,8 +69,8 @@ export default function FinishAdding({
         productDetail;
       temp.push({ price, style, quantity, imageLink: image });
       setProductDetailTemp(temp);
-      console.log(temp);
-      console.log(productDetailTemp);
+      // console.log(temp);
+      // console.log(productDetailTemp);
       // console.log("image link");
       // console.log(image);
     }

@@ -30,15 +30,20 @@ export default async function ProductPreview({
         pathname: `/main/warehouse/${productId}`,
       }}
     >
-      <div className="flex-col items-center gap-2 rounded-md border-2 p-6">
+      <div className="max-h-full flex-col items-center gap-2 rounded-md border-2 p-6 shadow-sm">
         <Image
           src={`${productDetails[0].imageLink}`}
           alt="product_pic"
           width={250}
           height={50}
+          className="max-h-56 min-h-56"
         ></Image>
         <div className="mt-2 flex justify-between">
-          {productName.length < 11 ?  (<p>{productName}</p>): (<p>{productName.substring(0,10)}...</p>)}
+          {productName.length < 11 ? (
+            <p>{productName}</p>
+          ) : (
+            <p>{productName.substring(0, 10)}...</p>
+          )}
           <p className="text-lg font-semibold">{"NTD " + minPrice}</p>
         </div>
 

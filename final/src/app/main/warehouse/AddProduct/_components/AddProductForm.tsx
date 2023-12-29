@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ChangeEvent, type DragEvent } from "react";
+import { useState, type ChangeEvent, type DragEvent } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -100,10 +100,10 @@ export default function AddProductForm() {
     router.push("/warehouse");
   };
 
-  useEffect(() => {
-    console.log(productDetail);
-    console.log(productName);
-  }, [productDetail, productName]);
+  // useEffect(() => {
+  //   console.log(productDetail);
+  //   console.log(productName);
+  // }, [productDetail, productName]);
 
   const handleNextStyle = () => {
     setPrice(productDetail[productNum].price);
@@ -121,9 +121,8 @@ export default function AddProductForm() {
     if (productDetail[productNum - 1] === undefined) {
       setLastProduct(false);
     } else {
-      if (price === "" || style === "" || quantity === 0 || image === "")
-        setLastProduct(true);
-      // setNotFinish(true);
+      // if (price === "" || style === "" || quantity === 0 || image === "")
+      setLastProduct(true);
     }
     if (productNum === 1) {
       setIsNext(true);

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 
-
 type Props = {
   detail_1: {
     productName: string;
@@ -19,12 +18,24 @@ type Props = {
 };
 
 function ProductDetail({ detail_1, detail_2 }: Props) {
-
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [isHovered, setIsHovered] = useState<boolean>(false);
+  const [isClicked, setIsClicked] = useState<boolean[]>(
+    new Array(detail_2.length).fill(false),
+  );
+  const [currentStyle, setCurrentStyle] = useState<string>("");
 
   const handleStyleSelection = (index: number) => {
+    setIsClicked((prevIsClicked) => {
+      const newIsClicked = [...prevIsClicked];
+      newIsClicked[index] = true; // Mark the currently clicked button as true
+      if (currentIndex !== index) {
+        newIsClicked[currentIndex] = false; // Reset the previously clicked button to false
+      }
+      return newIsClicked;
+    });
+
     setCurrentIndex(index);
+    setCurrentStyle(detail_2[index].productStyle);
   };
 
   return (
@@ -39,17 +50,16 @@ function ProductDetail({ detail_1, detail_2 }: Props) {
         <span>庫存尚有：{detail_2[currentIndex].productQuantity}</span>
         <span>已售出：{detail_2[currentIndex].productSold}</span>
       </div>
-      <div className="flex h-24 w-full items-center justify-start gap-4 px-8 py-3">
+      <div className="flex h-24 w-full items-center justify-start gap-4  py-3">
         {detail_2.map((detail, index) => (
           <button
             key={index}
-            className={`h-12 rounded-md border-2 bg-white px-4 ${
-              isHovered
-                ? "bg-slate-200" // Apply hover style for selected style
-                : "hover:bg-slate-200" // Apply hover style for other styles
+            id={index.toString()}
+            className={`h-12 rounded-md border-2 bg-white px-4 hover:bg-slate-200 ${
+              isClicked[index] ? "bg-slate-200" : "bg-white"
             }`}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+            // onMouseEnter={() => setIsHovered(true)}
+            // onMouseLeave={() => setIsHovered(false)}
             onClick={() => handleStyleSelection(index)}
           >
             {detail.productStyle}
