@@ -3,15 +3,19 @@ import EditButton from "./_components/EditButton";
 import ProductDescription from "./_components/ProductDescription";
 import ProductDetail from "./_components/ProductDetail";
 import ProductImage from "./_components/ProductImage";
-import { getProductDetail_1, getProductDetail_2, getProductPhotos } from "./_components/actions";
-
+import ProductReview from "./_components/ProductReview";
+import {
+  getProductDetail_1,
+  getProductDetail_2,
+  getProductPhotos,
+} from "./_components/actions";
 
 type Props = {
   params: { productId: string };
 };
 
 async function ProductPage({ params }: Props) {
-  const images =  await getProductPhotos(params.productId);
+  const images = await getProductPhotos(params.productId);
   const detail_1 = await getProductDetail_1(params.productId);
   const detail_2 = await getProductDetail_2(params.productId);
   return (
@@ -26,8 +30,10 @@ async function ProductPage({ params }: Props) {
         </div>
         <ProductDetail detail_1={detail_1} detail_2={detail_2} />
       </div>
-      <ProductDescription productId={params.productId}/>
-      <div className="min-h-screen w-2/5 grow overflow-y-scroll bg-gray-400"></div>
+      <ProductDescription productId={params.productId} />
+      <div className="min-h-screen w-2/5 grow overflow-y-scroll bg-white">
+        <ProductReview />
+      </div>
     </div>
   );
 }
