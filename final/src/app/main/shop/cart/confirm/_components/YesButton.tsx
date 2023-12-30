@@ -9,6 +9,7 @@ import { publicEnv } from "@/lib/env/public";
 type Props = {
   carts: {
     displayId: string;
+    buyQuantity: number;
   }[];
 };
 
@@ -22,11 +23,12 @@ function YesButton({ carts }: Props) {
   const searchParams = useSearchParams();
   
    
-  const { deleteCart } = useCart();
+  const { deleteCart, updateProductDetail } = useCart();
 
   const handleDelete = async () => {
     try {
       for (let i = 0; i < carts.length; i++) {
+        await updateProductDetail(carts[i].displayId, carts[i].buyQuantity);
         await deleteCart(carts[i].displayId);
       }
 

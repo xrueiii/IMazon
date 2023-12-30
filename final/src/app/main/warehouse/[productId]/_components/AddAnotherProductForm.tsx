@@ -17,7 +17,6 @@ type Props = {
 export default function AddAnotherProdcutForm({
   open,
   onClose,
-  productId,
 }: Props) {
   //   const [openStatus, setOpenStatus] = React.useState(open);
   //   const handleClose = () => {

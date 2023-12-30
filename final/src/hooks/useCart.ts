@@ -29,40 +29,34 @@ export default function useCart() {
     }
   };
 
-//   const addProductDetail = async (
-//     productId: ProductDetail["id"],
-//     productQuantity: ProductDetail["quantity"],
-//     productPrice: ProductDetail["price"],
-//     productStyle: ProductDetail["style"],
-//     productImageLink: ProductDetail["imageLink"],
-//   ) => {
-//     try {
-//       const res = await fetch("/api/detail", {
-//         method: "POST",
-//         body: JSON.stringify({
-//           productId: productId,
-//           productQuantity: productQuantity,
-//           productPrice: productPrice,
-//           productStyle: productStyle,
-//           productImageLink: productImageLink,
-//         }),
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//       });
+  const updateProductDetail = async (
+    cartId: string,
+    buyQuantity: number,
+  ) => {
+    try {
+      const res = await fetch("/api/detail", {
+        method: "PUT",
+        body: JSON.stringify({
+          cartId,
+          buyQuantity,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-//       const data = await res.json();
-//       router.refresh();
-//       // setLoading(false);
-//       return data;
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
+      const data = await res.json();
+      router.refresh();
+      // setLoading(false);
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return {
     // loading,
     deleteCart,
-    //addProductDetail,
+    updateProductDetail,
   };
 }

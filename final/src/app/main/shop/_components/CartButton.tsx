@@ -14,7 +14,7 @@ export default function CartButton() {
     router.push(`/main/shop/cart?${params.toString()}`);
   };
   return (
-    <IconButton onClick={handleOnClick}>
+    <IconButton onClick={handleOnClick} className="hover:text-lime-700">
       <ShoppingCartIcon />
     </IconButton>
   );

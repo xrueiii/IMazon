@@ -20,6 +20,7 @@ async function ConfirmPage() {
   const carts = await db
     .select({
       displayId: cartsTable.displayId,
+      buyQuantity: cartsTable.buyQuantity,
     })
     .from(cartsTable)
     .where(eq(cartsTable.userId, userId))

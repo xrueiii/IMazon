@@ -3,8 +3,9 @@ import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 
 import { db } from "@/db";
-import { productDetailTable } from "@/db/schema";
+import { cartsTable, productDetailTable } from "@/db/schema";
 import type { ProductDetail } from "@/lib/types";
+import { eq } from "drizzle-orm";
 
 const addProductDetailSchema = z.object({
   productId: z.string(),
@@ -58,6 +59,78 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
         { newProductDetail: newProductDetail },
+        { status: 200 },
+      );
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 },
+    );
+  }
+}
+
+const editProductDetailSchema = z.object({
+  cartId: z.string(),
+  buyQuantity: z.number(),
+});
+
+type editProductDetailRequest = z.infer<typeof editProductDetailSchema>;
+
+export async function PUT(request: NextRequest) {
+  const data = await request.json();
+
+  try {
+    editProductDetailSchema.parse(data);
+  } catch (error) {
+    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+  }
+
+  const {
+    cartId,
+    buyQuantity,
+  } = data as editProductDetailRequest;
+
+  try {
+    const [cart] = await db.select({
+      ProductDetailId: cartsTable.productDetailId,
+    }).from(cartsTable)
+    .where(eq(cartsTable.displayId, cartId))
+    .execute();
+
+    const [ProductDetailtarget] = await db.select(
+      {
+        productQuantity: productDetailTable.productQuantity,
+        productSold: productDetailTable.productSold,
+      })
+      .from(productDetailTable)
+      .where(eq(productDetailTable.displayId, cart.ProductDetailId))
+      .execute();
+
+    if (!ProductDetailtarget) {
+      return NextResponse.json(
+        { message: "Something went wrong." },
+        { status: 500 },
+      );
+    }
+
+    if (ProductDetailtarget.productQuantity < buyQuantity) {
+      return NextResponse.json(
+        { message: "There's not enough quantity of this product!" },
+        { status: 500 },
+      );
+    }
+
+    await db.update(productDetailTable).set({
+      productQuantity:  ProductDetailtarget.productQuantity - buyQuantity,
+      productSold: (ProductDetailtarget.productSold ?? 0) + buyQuantity,
+    })
+    .where(eq(productDetailTable.displayId, cart.ProductDetailId))
+    .execute();
+      
+
+
+    return NextResponse.json(
+        { message: "Product Detail Sucessfully Update." },
         { status: 200 },
       );
   } catch (error) {
