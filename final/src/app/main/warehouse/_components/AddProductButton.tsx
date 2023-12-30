@@ -1,11 +1,14 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function AddProductButton() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
   const handleOnClick = () => {
-    router.push("/main/warehouse/AddProduct");
+    params.set("mode", "seller"!);
+    router.push(`/main/warehouse/AddProduct?${params.toString()}`);
   };
   return (
     <button

@@ -1,11 +1,14 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function GoShoppingButton() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  params.set("mode", "buyer"!);
   const handleOnClick = () => {
-    router.push("/main/shop");
+    router.push(`/main/shop?${params.toString()}`);
   };
   return (
     <button

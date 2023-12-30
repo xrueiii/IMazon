@@ -58,7 +58,7 @@ async function ProductPage({ params }: Props) {
   return (
     <div className="flex h-full w-full grow flex-wrap justify-center overflow-y-scroll rounded-b-xl border-2 px-10">
       <div className="flex w-full flex-wrap bg-white justify-between">
-        <ProductDetail detail_1={detail_1} detail_2={detail_2} rate={rate.toString().substring(0,3)} images={images} />
+        <ProductDetail detail_1={detail_1} detail_2={detail_2} rate={rate ? rate.toString().substring(0,3): "no review"} images={images} />
   
       </div>
       <div className="mt-16 px-8 flex justify-between w-full">

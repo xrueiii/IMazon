@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 
 import { useSession } from "next-auth/react";
-import { redirect, useRouter } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 
 // Import FormEvent type from React
 import useProducts from "@/hooks/useProduct";
@@ -37,7 +37,9 @@ export default function FinishAdding({
   const { addProduct, addProductDetail } = useProducts();
   const router = useRouter();
   const session = useSession();
+  const searchParams = useSearchParams();
   const userId = session?.data?.user?.id;
+
   // const productName = "wine";
   // const productDescription = "good";
   if (!userId) {
@@ -97,7 +99,9 @@ export default function FinishAdding({
 
       // });
       router.refresh();
-      router.push(`/main/warehouse/${newProductId}`);
+      const params = new URLSearchParams(searchParams);
+      params.set("mode", "seller"!);
+      router.push(`/main/shop/${newProductId}?${params.toString()}`);
       // Additional logic or redirection can be added here
     } catch (error) {
       console.error(error);

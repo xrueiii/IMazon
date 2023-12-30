@@ -10,7 +10,6 @@ import { auth } from "@/lib/auth";
 import { publicEnv } from "@/lib/env/public";
 
 import CartButton from "./_components/CartButton";
-import LeftDrawerButton from "./_components/LeftDrawerButton";
 
 type Pageprops = {
   searchParams: {
@@ -39,7 +38,6 @@ export default async function ShopPage({
 
   return (
     <main className="flex min-h-screen items-start rounded-b-xl border-2">
-      <LeftDrawerButton />
       <div className="w-full flex-col justify-between">
         <div className="mt-5 flex justify-between px-10 ">
           <p className="text-2xl font-semibold">Products</p>
