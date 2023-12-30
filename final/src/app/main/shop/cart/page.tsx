@@ -70,7 +70,7 @@ async function CartPage() {
           <div key={index} className="flex w-full">
             <Link
               href={{
-                pathname: `/main/warehouse/${cart.product.displayId}`,
+                pathname: `/main/shop/${cart.product.displayId}`,
               }}
               className="flex h-40 w-full items-center justify-center"
             >

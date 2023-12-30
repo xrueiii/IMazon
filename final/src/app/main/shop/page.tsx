@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 import GetSerachName from "../warehouse/_components/GetSearchName";
-import ProductPreview from "../warehouse/_components/ProductPreview";
+import ProductPreview from "../shop/_components/ProductPreview";
 import { like } from "drizzle-orm";
 
 import { db } from "@/db";
@@ -15,11 +15,12 @@ import LeftDrawerButton from "./_components/LeftDrawerButton";
 type Pageprops = {
   searchParams: {
     searchName: string;
-  };
+    mode: string;
+  }
 };
 
-export default async function WarehousePage({
-  searchParams: { searchName },
+export default async function ShopPage({
+  searchParams: { searchName, mode },
 }: Pageprops) {
   const session = await auth();
   const userId = session?.user?.id;
@@ -52,6 +53,7 @@ export default async function WarehousePage({
             <ProductPreview
               productId={product.id}
               productName={product.productName}
+              mode={mode}
               key={product.id}
             />
           ))}

@@ -7,10 +7,11 @@ import Link from "next/link";
 
 export default async function HeaderBar() {
   const session = await auth();
+  
   return (
     <div className="flex w-full justify-between rounded-t-xl border-4 border-slate-200 bg-teal-900 px-8 py-8">
       <div className="flex items-end">
-          <Link href={{pathname: `/main/shop`}} className="flex gap-2">
+          <Link href={{pathname: `/main/shop?mode=buyer`}} className="flex gap-2">
             <Image src="/IMazon.ico" alt="IMazon icon" width={40} height={20} />
             <p className="ml-2 text-4xl font-semibold text-white">IMazon</p>
           </Link>

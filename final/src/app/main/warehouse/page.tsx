@@ -14,11 +14,12 @@ import ProductPreview from "./_components/ProductPreview";
 type Pageprops = {
   searchParams: {
     searchName: string;
+    mode: string;
   };
 };
 
 export default async function WarehousePage({
-  searchParams: { searchName },
+  searchParams: { searchName, mode },
 }: Pageprops) {
   const session = await auth();
   const userId = session?.user?.id;
@@ -52,6 +53,7 @@ export default async function WarehousePage({
               <ProductPreview
                 productId={product.id}
                 productName={product.productName}
+                mode={mode}
                 key={product.id}
               />
             ))}

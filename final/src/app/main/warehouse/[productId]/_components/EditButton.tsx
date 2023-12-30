@@ -10,7 +10,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 
 import { publicEnv } from "@/lib/env/public";
-import { Product } from "@/lib/types";
+import type { Product } from "@/lib/types";
 
 import AddAnotherProdcutForm from "./AddAnotherProductForm";
 import EditNameForm from "./EditNameForm";

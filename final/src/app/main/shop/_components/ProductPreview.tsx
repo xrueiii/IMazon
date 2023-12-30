@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { getProductDetails } from "../../warehouse/_components/action";
 
-import { getProductDetails } from "./action";
 
 type ProductPreviewProps = {
   productId: string;
@@ -29,10 +29,8 @@ export default async function ProductPreview({
   return (
     <Link
       href={{
-        pathname: `/main/warehouse/${productId}`,
-        query: {
-          mode,
-        },
+        pathname: `/main/shop/${productId}`,
+        query: {mode}
       }}
     >
       <div className="max-h-full flex-col items-center gap-2 rounded-md border-2 p-6 shadow-sm">
