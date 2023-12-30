@@ -3,6 +3,9 @@ import { useState, type FormEvent } from "react";
 import { useSession } from "next-auth/react";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
 
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+
 // Import FormEvent type from React
 import useProducts from "@/hooks/useProduct";
 import { publicEnv } from "@/lib/env/public";
@@ -27,14 +30,7 @@ export default function FinishAdding({
 }: FinishProps) {
   const [productDetailTemp, setProductDetailTemp] =
     useState<Omit<ProductDetail, "id" | "productId" | "sold">[]>(productDetail);
-
-  // console.log("image link: " + image);
-  // console.log(image);
-  // console.log(productFisrtStep.productName);
-  // productDetail.map((product) => {
-  //   console.log(product.imageLink);
-  // });
-  const { addProduct, addProductDetail } = useProducts();
+  const { loading, addProduct, addProductDetail } = useProducts();
   const router = useRouter();
   const session = useSession();
   const searchParams = useSearchParams();
@@ -46,35 +42,17 @@ export default function FinishAdding({
     redirect(`${publicEnv.NEXT_PUBLIC_BASE_URL}`);
   }
 
-  if (price === "" || style === "" || quantity === 0 || image === "") {
+  if (price === "" || style === "" || quantity <= 0 || image === "") {
     alert("Please finish all the column or go to last step to finish addig");
     return;
   }
   const handleFinish = async (e: FormEvent) => {
     e.preventDefault(); // Prevent the default form submission behavior
     if (productDetailTemp[productDetailTemp.length] === undefined) {
-      // const tempProductDetail: Omit<
-      //   ProductDetail,
-      //   "id" | "productId" | "sold"
-      // > = {
-      //   price,
-      //   style,
-      //   quantity,
-      //   imageLink: image,
-      // };
-
-      // setProductDetailTemp((prevProductDetails) => [
-      //   ...prevProductDetails,
-      //   tempProductDetail,
-      // ]);
       const temp: Omit<ProductDetail, "id" | "productId" | "sold">[] =
         productDetail;
       temp.push({ price, style, quantity, imageLink: image });
       setProductDetailTemp(temp);
-      // console.log(temp);
-      // console.log(productDetailTemp);
-      // console.log("image link");
-      // console.log(image);
     }
 
     // console.log(productFisrtStep);
@@ -85,7 +63,6 @@ export default function FinishAdding({
         productFisrtStep.productName,
         productFisrtStep.productDescription,
       );
-      // console.log(newProductId);
       for (let i = 0; i < productDetailTemp.length; i++) {
         await addProductDetail(
           newProductId,
@@ -95,13 +72,17 @@ export default function FinishAdding({
           productDetailTemp[i].imageLink,
         );
       }
-      // productDetailTemp.map(async (product) => {
-
-      // });
+      if (loading) {
+        return (
+          <Box sx={{ display: "flex" }}>
+            <CircularProgress />
+          </Box>
+        );
+      }
       router.refresh();
       const params = new URLSearchParams(searchParams);
       params.set("mode", "seller"!);
-      router.push(`/main/shop/${newProductId}?${params.toString()}`);
+      router.push(`/main/warehouse/${newProductId}?${params.toString()}`);
       // Additional logic or redirection can be added here
     } catch (error) {
       console.error(error);
@@ -113,7 +94,7 @@ export default function FinishAdding({
       onSubmit={handleFinish} // Attach the handler to the onSubmit event
       className="mb-3 w-full rounded-lg border-2 bg-teal-900 py-1 text-center text-sm text-white hover:bg-teal-700"
     >
-      <button data-testid="add-submit-button" type="submit">
+      <button data-testid="add-submit-button" type="submit" className="w-full">
         Finish
       </button>
     </form>

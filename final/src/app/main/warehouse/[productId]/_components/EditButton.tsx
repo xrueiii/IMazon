@@ -56,10 +56,7 @@ function EditButton({ productId, productName, productDetail }: EditProps) {
     router.refresh();
     router.push(`${publicEnv.NEXT_PUBLIC_BASE_URL}/main/warehouse`);
   };
-  // const handleProductStyle = () => {
-  //   // handleClose();
-  //   setEditDetail(true);
-  // };
+
   const handleAddAnother = () => {
     // handleClose();
     setAddAnother(true);
@@ -72,6 +69,8 @@ function EditButton({ productId, productName, productDetail }: EditProps) {
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
+        variant="outlined"
+        className="rounded-lg text-black border-black items-center hover:border-black  hover:bg-gray-200 flex"
       >
         Edit
       </Button>
@@ -101,9 +100,9 @@ function EditButton({ productId, productName, productDetail }: EditProps) {
         <MenuItem
           style={{ borderRadius: "5px" }}
           onClick={handleDelete}
-          className="text-red-500"
+          className="text-red-500 font-semibold"
         >
-          delete
+          Delete Whole Product
         </MenuItem>
       </Menu>
       {editName && (

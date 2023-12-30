@@ -22,6 +22,7 @@ type Props = {
   }[];
   
   rate: string;
+  commentQuantity: number;
 
   images: {
     productStyle: string;
@@ -29,7 +30,7 @@ type Props = {
   }[];
 };
 
-function ProductDetail({ detail_1, detail_2, rate, images }: Props) {
+function ProductDetail({ detail_1, detail_2, rate, images, commentQuantity }: Props) {
 
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const changePhoto = (increment: number) => {
@@ -60,9 +61,10 @@ function ProductDetail({ detail_1, detail_2, rate, images }: Props) {
       <div className="flex-col">
         <div className="flex h-14 w-full items-center justify-start text-3xl font-medium gap-2">
           {detail_1.productName}
-          <div className="flex text-lg gap-1 items-center">
+          <div className="flex text-lg items-center ml-10">
+            <p className="text-sm ml-1">{rate}</p>
             <StarRateIcon className="text-yellow-500 text-lg"/>
-            <p>({rate})</p>
+            <p className="text-sm ml-2">({commentQuantity})</p>
           </div>
         </div>
         <div className="flex h-14 w-full items-center justify-start text-4xl font-semibold  text-teal-900">

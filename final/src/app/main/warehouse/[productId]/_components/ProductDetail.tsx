@@ -1,9 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import StarRateIcon from '@mui/icons-material/StarRate';
-import AddToCartButton from "./AddToCartButton";
+import { useEffect, useState } from "react";
+
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+
+import StarRateIcon from "@mui/icons-material/StarRate";
+
+import AddToCartButton from "./AddToCartButton";
+import { deleteStyle } from "./actions";
 
 type Props = {
   detail_1: {
@@ -20,18 +25,19 @@ type Props = {
     productPrice: string;
     productStyle: string;
   }[];
-  
-  rate: string;
 
+  rate: string;
+  commentQuantity: number;
   images: {
     productStyle: string;
     productImageLink: string;
   }[];
 };
 
-function ProductDetail({ detail_1, detail_2, rate, images }: Props) {
-
+function ProductDetail({ detail_1, detail_2, rate, images, commentQuantity }: Props) {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [isLast, setIsLast] = useState<boolean>(false);
+  const router = useRouter();
   const changePhoto = (increment: number) => {
     let newIndex: number = (currentIndex + increment) % images.length;
     if (newIndex < 0) {
@@ -39,15 +45,25 @@ function ProductDetail({ detail_1, detail_2, rate, images }: Props) {
     }
     setCurrentIndex(newIndex);
   };
+  useEffect(() => {
+    if (detail_2.length === 1) {
+      setIsLast(true);
+    } else {
+      setIsLast(false);
+    }
+  }, [detail_2]);
+  // const handleDeleteStyle = async (e: MouseEvent) => {
+  //   e.preventDefault();
+  // };
 
   return (
-    <div className="flex mt-20 gap-16">
+    <div className="mt-20 flex gap-16">
       <div className="flex">
         <button onClick={() => changePhoto(-1)}>
           <Image src="/prev.png" alt="previous arrow" width={30} height={30} />
         </button>
         <Image
-          src={images[currentIndex].productImageLink}
+          src={images[currentIndex]?.productImageLink}
           alt="Product photo"
           width={350}
           height={350}
@@ -56,13 +72,14 @@ function ProductDetail({ detail_1, detail_2, rate, images }: Props) {
           <Image src="/next.png" alt="next arrow" width={30} height={30} />
         </button>
       </div>
-      
+
       <div className="flex-col">
-        <div className="flex h-14 w-full items-center justify-start text-3xl font-medium gap-2">
-          {detail_1.productName}
-          <div className="flex text-lg gap-1 items-center">
+        <div className="flex h-14 w-full items-center justify-start gap-2 text-3xl font-medium">
+          {detail_1?.productName ?? ""}
+          <div className="flex text-lg items-center ml-10">
+            <p className="text-sm ml-1">{rate}</p>
             <StarRateIcon className="text-yellow-500 text-lg"/>
-            <p>({rate})</p>
+            <p className="text-sm ml-2">({commentQuantity})</p>
           </div>
         </div>
         <div className="flex h-14 w-full items-center justify-start text-4xl font-semibold  text-teal-900">
@@ -71,26 +88,60 @@ function ProductDetail({ detail_1, detail_2, rate, images }: Props) {
         <div className="flex h-14 w-full items-center justify-start gap-10 text-xl">
           <span>庫存尚有：{detail_2[currentIndex].productQuantity}</span>
           <span>已售出：{detail_2[currentIndex].productSold}</span>
-          <AddToCartButton productId={detail_1.displayId} productDetailId={detail_2[currentIndex].displayId} quantityLeft={detail_2[currentIndex].productQuantity}/>
+          <AddToCartButton
+            productId={detail_1.displayId}
+            productDetailId={detail_2[currentIndex].displayId}
+            quantityLeft={detail_2[currentIndex].productQuantity}
+          />
         </div>
         <div className="flex h-24 w-full items-center justify-start gap-4">
           {detail_2.map((detail, index) => (
-            <button
-              key={index}
-              className={`h-12 rounded-md border-2 px-4 hover:bg-slate-200
-                 ${
-                currentIndex === index
-                  && "bg-slate-200"
-              }`}
-              onClick={() => setCurrentIndex(index)}
-            >
-              {detail.productStyle}
-            </button>
+            <div className="relative flex items-start" key={index}>
+              <button
+                className={`h-12 rounded-md border-2 px-4 hover:bg-slate-200
+                 ${currentIndex === index && "bg-slate-300"}`}
+                onClick={() => setCurrentIndex(index)}
+              >
+                {detail.productStyle}
+              </button>
+              {isLast === false && (
+                <button
+                  key={index}
+                  onClick={async () => {
+                    if (index === currentIndex) {
+                      if(index === 0 ){
+                        setCurrentIndex(index);
+                      }else{
+                        setCurrentIndex(index - 1);
+                      }             
+                    }
+                    try {
+                      await deleteStyle(detail_2[index].displayId);
+                      router.refresh();
+                    } catch (error) {
+                      console.log(error);
+                      alert("Delete style failed");
+                    }
+                  }}
+                >
+                  <Image
+                    src="/deleteStyle.svg"
+                    alt="next arrow"
+                    width={15}
+                    height={15}
+                    style={{
+                      position: "absolute",
+                      top: -5,
+                      right: -5,
+                    }}
+                    className="fill-red-500"
+                  />
+                </button>
+              )}
+            </div>
           ))}
         </div>
-
       </div>
-      
     </div>
   );
 }

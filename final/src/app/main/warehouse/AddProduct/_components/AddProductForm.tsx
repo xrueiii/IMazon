@@ -62,6 +62,10 @@ export default function AddProductForm() {
   const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     const inputNum = parseInt(inputValue, 10);
+    if (inputNum < 0) {
+      alert("Quantity can't be empty");
+      return;
+    }
     setQuantity(inputNum);
     setQuantityIsFilled(!!inputValue.trim()); // Will be true if not empty
   };
@@ -97,11 +101,6 @@ export default function AddProductForm() {
   const handleCancel = () => {
     router.push("/main/warehouse");
   };
-
-  // useEffect(() => {
-  //   console.log(productDetail);
-  //   console.log(productName);
-  // }, [productDetail, productName]);
 
   const handleNextStyle = () => {
     setPrice(productDetail[productNum].price);
@@ -141,7 +140,7 @@ export default function AddProductForm() {
     } else {
       setPriceIsFilled(true);
     }
-    if (quantity === 0) {
+    if (quantity <= 0) {
       setQuantityIsFilled(false);
     } else {
       setQuantityIsFilled(true);
@@ -157,7 +156,13 @@ export default function AddProductForm() {
       setImageIsFilled(true);
     }
 
-    if (priceIsFilled && quantityIsFilled && styleIsFilled && imageIsFilled && productDetail[productNum - 1] === undefined) {
+    if (
+      priceIsFilled &&
+      quantityIsFilled &&
+      styleIsFilled &&
+      imageIsFilled &&
+      productDetail[productNum - 1] === undefined
+    ) {
       setProductNum(productNum + 1);
       const newProductDetail: Omit<ProductDetail, "id" | "productId" | "sold"> =
         {
@@ -166,18 +171,10 @@ export default function AddProductForm() {
           quantity,
           imageLink: image,
         };
-      // const newProductName: Omit<Product, "id" | "sellerDisplayId"> = {
-      //   productName: name,
-      //   productDescription: description,
-      // };
       setProductDetail((prevProductDetails) => [
         ...prevProductDetails,
         newProductDetail,
       ]);
-      // setProductName((prevProductNames) => [
-      //   ...prevProductNames,
-      //   newProductName,
-      // ]);
 
       //clear all the existing data
       setPrice("");
@@ -358,7 +355,7 @@ export default function AddProductForm() {
                   </p>
                 )}
                 <div
-                  className={`relative w-[280px] rounded-lg border-2 border-dashed border-gray-300 p-6 ${
+                  className={`relative h-[300px] w-[280px] rounded-lg border-2 border-dashed border-gray-300 p-6 ${
                     isDragOver ? "border-indigo-600" : ""
                   }`}
                   id="dropzone"
@@ -402,7 +399,7 @@ export default function AddProductForm() {
                     <Image
                       src={previewSrc}
                       fill
-                      className="mx-auto max-h-40 bg-white"
+                      className="max-h-100 mx-auto bg-white"
                       alt="Preview"
                     />
                   )}
@@ -441,7 +438,7 @@ export default function AddProductForm() {
               {lastProduct === false &&
                 price !== "" &&
                 style !== "" &&
-                quantity !== 0 &&
+                quantity > 0 &&
                 image !== "" && (
                   <FinishAdding
                     price={price}

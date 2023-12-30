@@ -12,7 +12,7 @@ export default async function ProductDescription({ productId }: Props) {
 
   return (
     <div
-      className="w-3/5 grow overflow-y-scroll text-lg"
+      className="w-2/5 grow overflow-y-scroll text-lg px-8"
       style={{ lineHeight: "1.8" }}
     >
       <p className="text-3xl font-medium">產品介紹：</p>

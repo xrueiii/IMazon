@@ -16,6 +16,9 @@ export default function GetSerachName() {
   const handleCancelSearch = () => {
     const params = new URLSearchParams(searchParams);
     params.set("searchName", ""!);
+    if (searchInputRef.current) {
+      searchInputRef.current.value = "";
+    }
     router.push(`${pathname}?${params.toString()}`);
   }
 
