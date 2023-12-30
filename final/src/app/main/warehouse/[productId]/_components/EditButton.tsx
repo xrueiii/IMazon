@@ -56,10 +56,7 @@ function EditButton({ productId, productName, productDetail }: EditProps) {
     router.refresh();
     router.push(`${publicEnv.NEXT_PUBLIC_BASE_URL}/main/warehouse`);
   };
-  // const handleProductStyle = () => {
-  //   // handleClose();
-  //   setEditDetail(true);
-  // };
+
   const handleAddAnother = () => {
     // handleClose();
     setAddAnother(true);
@@ -72,6 +69,7 @@ function EditButton({ productId, productName, productDetail }: EditProps) {
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
+        className="rounded-lg border-2 text-black"
       >
         Edit
       </Button>

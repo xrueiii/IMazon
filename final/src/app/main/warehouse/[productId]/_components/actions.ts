@@ -2,10 +2,15 @@
 
 import { revalidatePath } from "next/cache";
 
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 import { db } from "@/db";
-import { cartsTable, commentsTable, productDetailTable, productTable } from "@/db/schema";
+import {
+  cartsTable,
+  commentsTable,
+  productDetailTable,
+  productTable,
+} from "@/db/schema";
 
 export async function getProductPhotos(productId: string) {
   console.log(productId);
@@ -38,33 +43,27 @@ export async function editProductDetail(
   quantity: number,
   styleId: string,
 ) {
-  console.log(styleId);
+  // console.log(styleId);
   await db
     .update(productDetailTable)
     .set({
+      productStyle: style,
       productPrice: price,
       productImageLink: imageLink,
       productQuantity: quantity,
-      productStyle: style,
     })
-    .where(eq(productDetailTable.displayId, styleId))
+    .where(
+      and(
+        eq(productDetailTable.productId, productId),
+        eq(productDetailTable.displayId, styleId),
+      ),
+    )
     .returning();
   revalidatePath(`/main/warehouse/${productId}`);
 }
 
-// export async function getAllStyleId(productId: string) {
-//   const [styleId] = await db.query.productDetailTable.findMany({
-//     where: eq(productDetailTable.productId, productId),
-//     columns: {
-//       displayId: true,
-//     },
-//   });
-
-//   return styleId;
-// }
-
 export async function getProductDetail(productId: string) {
-  console.log(productId);
+  // console.log(productId);
   const productDetail = await db.query.productDetailTable.findMany({
     where: eq(productDetailTable.productId, productId),
     columns: {
@@ -83,6 +82,12 @@ export const deleteProduct = async (productId: string) => {
   console.log("[deleteProduct]");
   await db.delete(productTable).where(eq(productTable.displayId, productId));
   return;
+};
+
+export const deleteStyle = async (displayId: string) => {
+  await db
+    .delete(productDetailTable)
+    .where(eq(productDetailTable.displayId, displayId));
 };
 
 export async function getProductDetail_1(productId: string) {
@@ -116,26 +121,42 @@ export async function getProductDetail_2(productId: string) {
   return productDetail;
 }
 
-export async function postComment(productId: string, userId: string, content: string, rate: number) {
+export async function postComment(
+  productId: string,
+  userId: string,
+  content: string,
+  rate: number,
+) {
   console.log(productId);
-  await db.insert(commentsTable).values({
-    userId: userId,
-    productId: productId,
-    content: content,
-    rate: rate,
-  }).execute();
+  await db
+    .insert(commentsTable)
+    .values({
+      userId: userId,
+      productId: productId,
+      content: content,
+      rate: rate,
+    })
+    .execute();
 
   return;
 }
 
-export async function addProductToCart( userId: string, productId: string, productDetailId: string, buyQuantity: number) {
+export async function addProductToCart(
+  userId: string,
+  productId: string,
+  productDetailId: string,
+  buyQuantity: number,
+) {
   console.log(productId);
-  await db.insert(cartsTable).values({
-    userId: userId,
-    productId: productId,
-    productDetailId: productDetailId,
-    buyQuantity: buyQuantity,
-  }).execute();
+  await db
+    .insert(cartsTable)
+    .values({
+      userId: userId,
+      productId: productId,
+      productDetailId: productDetailId,
+      buyQuantity: buyQuantity,
+    })
+    .execute();
 
   return;
 }

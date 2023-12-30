@@ -1,17 +1,20 @@
 "use client";
 
-import type { Product, ProductDetail } from "@/lib/types";
+import { useState } from "react";
+
 import { useRouter } from "next/navigation";
 
+import type { Product, ProductDetail } from "@/lib/types";
+
 export default function useProducts() {
-  // const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const addProduct = async (
     userId: string,
     productName: Product["productName"],
     productDescription: Product["productDescription"],
   ) => {
-    //setLoading(true);
+    setLoading(true);
     try {
       const res = await fetch("/api/products", {
         method: "POST",
@@ -66,7 +69,7 @@ export default function useProducts() {
   };
 
   return {
-    // loading,
+    loading,
     addProduct,
     addProductDetail,
   };

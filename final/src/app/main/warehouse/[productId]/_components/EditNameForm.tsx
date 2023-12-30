@@ -2,6 +2,7 @@ import * as React from "react";
 import { ChangeEvent, DragEvent, useState } from "react";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -38,6 +39,7 @@ export default function EditNameForm({
   productName,
   productDetail,
 }: Props) {
+  const router = useRouter();
   //edit name part
   const [name, setName] = useState<string>(productName.productName);
   const [description, setDescription] = useState<string>(
@@ -49,6 +51,9 @@ export default function EditNameForm({
   );
   const [style, setStyle] = useState<string>(productDetail[0].productStyle);
   const [image, setImage] = useState<string>(productDetail[0].productImageLink);
+  const [displayId, setDisplayId] = useState<string>(
+    productDetail[0].displayId,
+  );
 
   const [nameIsFilled, setNameIsFilled] = useState<boolean>(true);
   const [desciptionIsFilled, setDescriptionIsFilled] = useState<boolean>(true);
@@ -82,6 +87,10 @@ export default function EditNameForm({
   const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     const inputNum = parseInt(inputValue, 10);
+    if (inputNum < 0) {
+      alert("Quantity can't be empty");
+      return;
+    }
     setQuantity(inputNum);
     setQuantityIsFilled(!!inputValue.trim()); // Will be true if not empty
   };
@@ -159,10 +168,12 @@ export default function EditNameForm({
       productDetail[currentIndex].productQuantity = quantity;
       productDetail[currentIndex].productStyle = style;
       productDetail[currentIndex].productImageLink = image;
+      productDetail[currentIndex].displayId = displayId;
       setPrice(productDetail[currentIndex - 1].productPrice);
       setQuantity(productDetail[currentIndex - 1].productQuantity);
       setStyle(productDetail[currentIndex - 1].productStyle);
       setImage(productDetail[currentIndex - 1].productImageLink);
+      setDisplayId(productDetail[currentIndex - 1].displayId);
       setCurrentIndex(currentIndex - 1);
     }
   };
@@ -188,15 +199,18 @@ export default function EditNameForm({
     } else {
       setImageIsFilled(true);
     }
-    if (price !== "" && quantity >= 0 && style !== "" && image !== "") {
+    if (price !== "" && quantity > 0 && style !== "" && image !== "") {
+      console.log("currentIndex: " + currentIndex);
       productDetail[currentIndex].productPrice = price;
       productDetail[currentIndex].productQuantity = quantity;
       productDetail[currentIndex].productStyle = style;
       productDetail[currentIndex].productImageLink = image;
+      productDetail[currentIndex].displayId = displayId;
       setPrice(productDetail[currentIndex + 1].productPrice);
       setQuantity(productDetail[currentIndex + 1].productQuantity);
       setStyle(productDetail[currentIndex + 1].productStyle);
       setImage(productDetail[currentIndex + 1].productImageLink);
+      setDisplayId(productDetail[currentIndex + 1].displayId);
       setCurrentIndex(currentIndex + 1);
     }
   };
@@ -218,7 +232,7 @@ export default function EditNameForm({
     } else {
       setPriceIsFilled(true);
     }
-    if (quantity === 0) {
+    if (quantity <= 0) {
       setQuantityIsFilled(false);
     } else {
       setQuantityIsFilled(true);
@@ -234,10 +248,14 @@ export default function EditNameForm({
       setImageIsFilled(true);
     }
 
+    // console.log(currentIndex);
+    console.log(productDetail);
     productDetail[currentIndex].productPrice = price;
     productDetail[currentIndex].productStyle = style;
     productDetail[currentIndex].productImageLink = image;
     productDetail[currentIndex].productQuantity = quantity;
+    productDetail[currentIndex].displayId = displayId;
+    console.log(productDetail);
 
     if (
       name !== "" &&
@@ -247,9 +265,10 @@ export default function EditNameForm({
       quantity > 0 &&
       image !== ""
     ) {
+      console.log(productDetail);
       try {
         await editProductName(productId, name, description);
-        for (let i = 0; i < productDetail.length - 1; i++) {
+        for (let i = 0; i < productDetail.length; i++) {
           await editProductDetail(
             productId,
             productDetail[i].productPrice,
@@ -259,6 +278,9 @@ export default function EditNameForm({
             productDetail[i].displayId,
           );
         }
+        // console.log(productDetail);
+        router.refresh();
+        router.push(`/main/warehouse/${productId}`);
         onClose();
       } catch (error) {
         console.log(error);
@@ -308,10 +330,8 @@ export default function EditNameForm({
           {desciptionIsFilled === false && (
             <p className="text-xs text-red-500">*Description can't be empty</p>
           )}
-        </DialogContent>
 
-        <DialogContent>
-          <div className="flex items-center justify-between">
+          <div className="mt-5 flex items-center justify-between">
             <DialogContentText className="font-bold">
               Styles No. {currentIndex + 1} Info
             </DialogContentText>
@@ -320,17 +340,33 @@ export default function EditNameForm({
                 {currentIndex !== 0 && (
                   <Button
                     onClick={handleLastProduct}
-                    className="relative h-6 bg-gray-200 text-center text-black"
+                    className="relative h-8 text-center text-black"
                   >
+                    <Image
+                      className="max-auto h-6 w-6"
+                      // fill
+                      src="/last_button.svg"
+                      alt="next button"
+                      width={6}
+                      height={6}
+                    />
                     Last
                   </Button>
                 )}
                 {currentIndex !== productDetail.length - 1 && (
                   <Button
                     onClick={handleNextProduct}
-                    className="relative h-6 bg-gray-200 text-center text-black"
+                    className="relative h-8 text-center text-black"
                   >
                     Next
+                    <Image
+                      className="mx-auto h-6 w-6"
+                      // fill
+                      src="/next_button2.svg"
+                      alt="next button"
+                      width={6}
+                      height={6}
+                    />
                   </Button>
                 )}
               </DialogActions>

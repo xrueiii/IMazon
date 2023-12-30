@@ -1,4 +1,13 @@
+import { redirect } from "next/navigation";
+
+import StarOutlineIcon from "@mui/icons-material/StarOutline";
+import StarRateIcon from "@mui/icons-material/StarRate";
+import { eq } from "drizzle-orm";
+
+import { db } from "@/db";
+import { commentsTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
+import { publicEnv } from "@/lib/env/public";
 // import DeleteButton from "./_components/DeleteButton";
 // import EditButton from "./_components/EditButton";
 import type { Product } from "@/lib/types";
@@ -7,19 +16,12 @@ import EditButton from "./_components/EditButton";
 import ProductDescription from "./_components/ProductDescription";
 import ProductDetail from "./_components/ProductDetail";
 import ReviewInput from "./_components/ReviewInput";
-import StarOutlineIcon from '@mui/icons-material/StarOutline';
-import StarRateIcon from '@mui/icons-material/StarRate';
 import {
   getProductDetail,
   getProductDetail_1,
   getProductDetail_2,
   getProductPhotos,
 } from "./_components/actions";
-import { publicEnv } from "@/lib/env/public";
-import { redirect } from "next/navigation";
-import { db } from "@/db";
-import { commentsTable } from "@/db/schema";
-import { eq } from "drizzle-orm";
 
 type Props = {
   params: { productId: string };
@@ -36,8 +38,8 @@ async function ProductPage({ params }: Props) {
       user: {
         columns: {
           name: true,
-        }
-      }
+        },
+      },
     },
     columns: {
       content: true,
@@ -46,12 +48,12 @@ async function ProductPage({ params }: Props) {
     },
   });
 
-  let rate:GLfloat = 0;
+  let rate: GLfloat = 0;
   comments.forEach((comment) => {
     rate += comment.rate;
-  })
+  });
 
-  rate = rate/comments.length;
+  rate = rate / comments.length;
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) {
@@ -60,94 +62,103 @@ async function ProductPage({ params }: Props) {
 
   // const stylesId = await getAllStyleId(params.productId);
   const productName: Omit<Product, "id" | "sellerDisplayId"> = {
-    productName: detail_1.productName,
-    productDescription: detail_1.productDescription,
+    productName: detail_1?.productName ?? "",
+    productDescription: detail_1?.productDescription ?? "",
   };
   const detail = await getProductDetail(params.productId);
   return (
     <div className="flex h-full w-full grow flex-wrap justify-center overflow-y-scroll rounded-b-xl border-2 px-10">
-      <div className="flex w-full flex-wrap bg-white">
-        <ProductDetail detail_1={detail_1} detail_2={detail_2} rate={rate.toString().substring(0,3)} images={images} />
-        <EditButton
-              productId={params.productId}
-              productName={productName}
-              productDetail={detail}
+      <div className="flex flex-row">
+        <div className="flex w-full flex-row flex-wrap bg-white">
+          <ProductDetail
+            detail_1={detail_1}
+            detail_2={detail_2}
+            rate={rate.toString().substring(0, 3)}
+            images={images}
           />
+        </div>
+        <div className="ml-[95px] mt-[85px]">
+          <EditButton
+            productId={params.productId}
+            productName={productName}
+            productDetail={detail}
+          />
+        </div>
       </div>
-      <div className="mt-16 px-8 flex justify-between w-full">
+      <div className="mt-16 flex w-full justify-between px-8">
         <ProductDescription productId={params.productId} />
-        <div className="min-h-screen w-2/5 grow overflow-y-scroll border-2 bg-white rounded-md">
-          <p className="font-normal p-5 text-2xl">評論</p>
-          {userId !== detail_1.sellerdisplayId && <ReviewInput userId={userId} productId={params.productId}/>}
-          { comments.length === 0 && <p className="w-full text-gray-500 text-center mt-10">There's still no comment for this product.</p>}
+        <div className="min-h-screen w-2/5 grow overflow-y-scroll rounded-md border-2 bg-white">
+          <p className="p-5 text-2xl font-normal">評論</p>
+          {userId !== detail_1?.sellerdisplayId && (
+            <ReviewInput userId={userId} productId={params.productId} />
+          )}
+          {comments.length === 0 && (
+            <p className="mt-10 w-full text-center text-gray-500">
+              There's still no comment for this product.
+            </p>
+          )}
           <div className="mt-5 w-full flex-col gap-2">
-            {comments.map((comment, index) => 
-              <div key={index} className="w-full border py-16 px-10">
+            {comments.map((comment, index) => (
+              <div key={index} className="w-full border px-10 py-16">
                 <div className="flex justify-between">
                   <div className="flex gap-2">
                     <p>{comment.user.name}:</p>
                     <p>{comment.content}</p>
                   </div>
                   <div className="flex gap-2 text-xs">
-                  {
-                    comment.rate === 1 && 
+                    {comment.rate === 1 && (
                       <>
-                        <StarRateIcon className="text-yellow-500"/>
-                        <StarOutlineIcon/>
-                        <StarOutlineIcon/>
-                        <StarOutlineIcon/>
-                        <StarOutlineIcon/>
+                        <StarRateIcon className="text-yellow-500" />
+                        <StarOutlineIcon />
+                        <StarOutlineIcon />
+                        <StarOutlineIcon />
+                        <StarOutlineIcon />
                       </>
-                  }
-                  {
-                    comment.rate === 2 && 
+                    )}
+                    {comment.rate === 2 && (
                       <>
-                        <StarRateIcon className="text-yellow-500"/>
-                        <StarRateIcon className="text-yellow-500"/>
-                        <StarOutlineIcon/>
-                        <StarOutlineIcon/>
-                        <StarOutlineIcon/>
+                        <StarRateIcon className="text-yellow-500" />
+                        <StarRateIcon className="text-yellow-500" />
+                        <StarOutlineIcon />
+                        <StarOutlineIcon />
+                        <StarOutlineIcon />
                       </>
-                  }
-                  {
-                    comment.rate === 3 && 
+                    )}
+                    {comment.rate === 3 && (
                       <>
-                        <StarRateIcon className="text-yellow-500"/>
-                        <StarRateIcon className="text-yellow-500"/>
-                        <StarRateIcon className="text-yellow-500"/>
-                        <StarOutlineIcon/>
-                        <StarOutlineIcon/>
+                        <StarRateIcon className="text-yellow-500" />
+                        <StarRateIcon className="text-yellow-500" />
+                        <StarRateIcon className="text-yellow-500" />
+                        <StarOutlineIcon />
+                        <StarOutlineIcon />
                       </>
-                  }
-                  {
-                    comment.rate === 4 && 
+                    )}
+                    {comment.rate === 4 && (
                       <>
-                        <StarRateIcon className="text-yellow-500"/>
-                        <StarRateIcon className="text-yellow-500"/>
-                        <StarRateIcon className="text-yellow-500"/>
-                        <StarRateIcon className="text-yellow-500"/>
-                        <StarOutlineIcon/>
+                        <StarRateIcon className="text-yellow-500" />
+                        <StarRateIcon className="text-yellow-500" />
+                        <StarRateIcon className="text-yellow-500" />
+                        <StarRateIcon className="text-yellow-500" />
+                        <StarOutlineIcon />
                       </>
-                  }
-                  {
-                    comment.rate === 5 && 
+                    )}
+                    {comment.rate === 5 && (
                       <>
-                        <StarRateIcon className="text-yellow-500"/>
-                        <StarRateIcon className="text-yellow-500"/>
-                        <StarRateIcon className="text-yellow-500"/>
-                        <StarRateIcon className="text-yellow-500"/>
-                        <StarRateIcon className="text-yellow-500"/>
+                        <StarRateIcon className="text-yellow-500" />
+                        <StarRateIcon className="text-yellow-500" />
+                        <StarRateIcon className="text-yellow-500" />
+                        <StarRateIcon className="text-yellow-500" />
+                        <StarRateIcon className="text-yellow-500" />
                       </>
-                  }
+                    )}
                   </div>
                 </div>
               </div>
-            )}
+            ))}
           </div>
         </div>
       </div>
     </div>
-      
   );
 }
 
